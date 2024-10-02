@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Головна сторінка</title>
+    <link rel="icon" href="https://i.imgur.com/fQLBeQ9.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Comfortaa', cursive;
+            background-color: black; /* Чорний фон */
+            color: white;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+        }
+
+        .text-container {
+            width: 50%; /* Текст займатиме половину сторінки */
+            padding: 20px;
+            box-sizing: border-box;
+            font-size: 14px; /* Зменшений розмір тексту */
+        }
+
+        .image-container {
+            width: 50%;
+            background-image: url('https://i.imgur.com/VdqaDVy.png');
+            background-size: cover;
+            background-position: center;
+            height: 100vh; /* Висота на всю сторінку */
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 0, 0, 0.25); /* Червоний фон на 25% прозорості */
+            color: red; /* Червоний текст */
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            position: fixed;
+            top: 20px; /* В самому верху */
+            right: 20px; /* З правого боку */
+        }
+
+        .login-btn:hover {
+            background-color: rgba(255, 0, 0, 0.75); /* Темніший при наведенні */
+        }
+
+        .login-btn img {
+            margin-right: 10px; /* Відступ між зображенням і текстом */
+            width: 20px;
+            height: 20px;
+        }
+
+        footer {
+            background-color: #111; /* Темний фон контитулу */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Медіа-запити для мобільних пристроїв */
+        @media (max-width: 768px) {
+            .text-container {
+                width: 100%; /* Текст займатиме всю ширину */
+                padding: 10px; /* Менше відступу */
+                font-size: 12px; /* Менший розмір тексту */
+                margin-top: 40px; /* Додано верхній відступ 40px для тексту */
+            }
+
+            .image-container {
+                display: none; /* Сховати зображення на мобільних пристроях */
+            }
+
+            .login-btn {
+                font-size: 16px; /* Зменшити розмір кнопки на мобільних */
+                top: 10px; /* Зменшити відстань від верху */
+                right: 10px; /* Зменшити відстань від правого краю */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="text-container">
+        <h1>MODERATOR DISCORD 04 SERVER</h1>
+        <p>Ласкаво просимо на інформаційну сторінку модераторів нашого Discord-сервера. Наша місія полягає в підтримці дружньої та безпечної атмосфери для всіх учасників.</p>
+        <p>Модератори стежать за дотриманням правил, вирішують конфлікти та організовують активності, щоб кожен міг насолоджуватися спілкуванням. Ми працюємо над створенням спільноти, де кожен почувається комфортно і має можливість висловити свою думку.</p>
+        <p>Дякуємо, що ви з нами! Разом ми можемо зробити наш сервер ще кращим!</p>
+    </div>
+    <div class="image-container"></div>
+
+    <button class="login-btn" onclick="window.location.href='login.html'">
+        <img src="https://i.imgur.com/dtvfULB.png" alt="Login Icon"> Вхід
+    </button>
+
+    <footer>
+        &copy; 2024 M.D 04 | UKRAINE GTA | Всі права захищені.
+        <p>Сайт розробив Senior Moderator 04 server Daniil Shulga</p>
+    </footer>
+</body>
+</html>
