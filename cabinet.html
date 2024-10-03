@@ -168,11 +168,11 @@
         </div>
         <div class="counter-box pink">
             <div class="counter-title">Кількість премії</div>
-            <div class="counter-value" id="bonusCounter">0%</div>
+            <div class="counter-value" id="bonusCounter">0</div>
         </div>
         <div class="counter-box teal">
             <div class="counter-title">Кількість штрафів</div>
-            <div class="counter-value" id="finesCounter">0%</div>
+            <div class="counter-value" id="finesCounter">0</div>
         </div>
     </div>
 
@@ -221,8 +221,8 @@
                         document.getElementById('punishmentsCounter').textContent = data.punishmentsCounter || 0;
                         document.getElementById('warningsCounter').textContent = data.warningsCounter || 0;
                         document.getElementById('techSupportCounter').textContent = data.techSupportCounter || 0;
-                        document.getElementById('bonusCounter').textContent = data.bonusCounter || 0%;
-                        document.getElementById('finesCounter').textContent = data.finesCounter || 0%;
+                        document.getElementById('bonusCounter').textContent = data.bonusCounter || 0;
+                        document.getElementById('finesCounter').textContent = data.finesCounter || 0;
 
                         // Отримання дати призначення
                         const appointmentDate = new Date(data.appointmentDate);
