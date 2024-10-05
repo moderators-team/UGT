@@ -48,6 +48,7 @@
         h1 {
             font-family: 'Comfortaa', sans-serif;
             margin-top: 5px;
+
         }
 
         .moderator-photo {
@@ -91,7 +92,8 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-top: 20px;
+            margin-top: -90px;
+            float: left;
         }
 
         .action-btn {
@@ -120,9 +122,11 @@
         .orange { background-color: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.75); }
         .pink { background-color: rgba(255, 192, 203, 0.1); border: 1px solid rgba(255, 192, 203, 0.75); }
         .teal { background-color: rgba(0, 128, 128, 0.1); border: 1px solid rgba(0, 128, 128, 0.75); }
+        .lime { background-color: rgba(21, 128, 0, 0.1); border: 1px solid rgba(90, 128, 0, 0.75); }
 
         .counter-title {
             font-size: 14px;
+
         }
 
         .counter-value {
@@ -130,6 +134,25 @@
             font-weight: bold;
             color: #FFA500;
         }
+
+        footer {
+            background-color: #111; /* Темний фон контитулу */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .counter-valu {
+            font-size: 26px;
+            font-weight: bold;
+            color: #FFA500;
+            font-style: italic;
+        }
+
     </style>
 </head>
 <body>
@@ -140,30 +163,30 @@
     <div class="container">
         <div class="counter-box yellow">
             <div class="counter-title">Кількість днів на посаді</div>
-            <div class="counter-value" id="daysCounter">0</div>
+            <div class="counter-value" id="daysnaposadyCounter">0</div>
         </div>
         <div class="counter-box cyan">
             <div class="counter-title">Кількість доган</div>
-            <div class="counter-value" id="reprimandCounter">0/2</div>
+            <div class="counter-value" id="dohanyCounter">0/2</div>
         </div>
         <div class="counter-box purple">
             <div class="counter-title">Кількість попереджень</div>
-            <div class="counter-value" id="warningCounter">0/3</div>
+            <div class="counter-value" id="poperedgenyamdCounter">0/3</div>
         </div>
         <div class="counter-box red">
             <div class="counter-title">Кількість онлайн змін (годин)</div>
-            <div class="counter-value" id="onlineChangesCounter">0</div>
+            <div class="counter-valu" id="onlinezminaCounter">0</div>
         </div>
         <div class="counter-box green">
             <div class="counter-title">Кількість покарань</div>
-            <div class="counter-value" id="punishmentsCounter">0</div>
+            <div class="counter-value" id="pokaranyaCounter">0</div>
         </div>
         <div class="counter-box blue">
             <div class="counter-title">Кількість попереджень</div>
             <div class="counter-value" id="warningsCounter">0</div>
         </div>
         <div class="counter-box orange">
-            <div class="counter-title">Кількість відповідей у "питання до тех-підтримки"</div>
+            <div class="counter-title">К-сть відповідей у "питання до тех-підтримки"</div>
             <div class="counter-value" id="techSupportCounter">0</div>
         </div>
         <div class="counter-box pink">
@@ -172,7 +195,11 @@
         </div>
         <div class="counter-box teal">
             <div class="counter-title">Кількість штрафів</div>
-            <div class="counter-value" id="finesCounter">0</div>
+            <div class="counter-value" id="strafCounter">0</div>
+        </div>
+        <div class="counter-box lime">
+            <div class="counter-title">К-сть днів неактивів/відпусток</div>
+            <div class="counter-value" id="vidpustka">0 Days</div>
         </div>
     </div>
 
@@ -215,14 +242,15 @@
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         document.getElementById('username-display').textContent = data.nickname || userId;
-                        document.getElementById('reprimandCounter').textContent = data.reprimandCounter || '0/2';
-                        document.getElementById('warningCounter').textContent = data.warningCounter || '0/3';
-                        document.getElementById('onlineChangesCounter').textContent = data.onlineChangesCounter || 0;
-                        document.getElementById('punishmentsCounter').textContent = data.punishmentsCounter || 0;
+                        document.getElementById('dohanyCounter').textContent = data.reprimandCounter || '0/2';
+                        document.getElementById('poperedgenyamdCounter').textContent = data.warningCounter || '0/3';
+                        document.getElementById('onlinezminaCounter').textContent = data.onlineChangesCounter || 0;
+                        document.getElementById('pokaranyaCounter').textContent = data.punishmentsCounter || 0;
                         document.getElementById('warningsCounter').textContent = data.warningsCounter || 0;
                         document.getElementById('techSupportCounter').textContent = data.techSupportCounter || 0;
-                        document.getElementById('bonusCounter').textContent = data.bonusCounter || 0;
-                        document.getElementById('finesCounter').textContent = data.finesCounter || 0;
+                        document.getElementById('bonusCounter').textContent = data.bonusCounter || "0%";
+                        document.getElementById('strafCounter').textContent = data.finesCounter || "0%";
+                        document.getElementById('vidpustka').textContent = data.vidpustka || "0 Days";
 
                         // Отримання дати призначення
                         const appointmentDate = new Date(data.appointmentDate);
@@ -251,5 +279,10 @@
 
         window.logout = logout;
     </script>
+    <footer>
+
+        &copy; 2024 M.D 04 | UKRAINE GTA | Всі права захищені.
+        <p>Сайт розробив Senior Moderator 04 server Daniil Shulga</p>
+    </footer>
 </body>
 </html>
