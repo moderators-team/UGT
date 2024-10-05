@@ -89,6 +89,18 @@
             }
         }
     </style>
+
+<script>
+    // Перевіряємо статус технічних робіт
+    window.onload = function() {
+        let isUnderMaintenance = localStorage.getItem('maintenanceMode') === 'false'; //false включені тех роботи true вимкнені
+        if (isUnderMaintenance) {
+            // Перенаправлення на сторінку технічних робіт
+            window.location.href = "tech-work.html"; // Заміна на URL вашої сторінки технічних робіт
+        }
+    };
+</script>
+    
 </head>
 <body>
     <div class="text-container">
