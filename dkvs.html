@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ДКВС</title>
-      <link rel="icon" href="https://i.imgur.com/fQLBeQ9.png" type="image/png">
+    <link rel="icon" href="https://i.imgur.com/fQLBeQ9.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Стилі залишаються без змін */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -30,15 +31,15 @@
         h1 {
             text-align: center;
             font-size: 2.5em;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-family: 'Poppins', sans-serif;
             color: #538aff;
         }
 
-        h2 {
-            margin-bottom: 15px;
-            font-family: 'Poppins', sans-serif;
+        #counter {
             text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
             color: #FFD700;
         }
 
@@ -97,45 +98,6 @@
             outline: none;
         }
 
-        textarea {
-            resize: none;
-        }
-
-        select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            background: rgba(51, 51, 51, 0.9);
-            color: #fff;
-            font-size: 1em;
-            margin-bottom: 15px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            margin: 15px 0;
-        }
-
-        .checkbox-group {
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            margin-left: 12px;
-            font-weight: 400;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            accent-color: #4CAF50;
-        }
-
         button {
             background: #4CAF50;
             color: white;
@@ -181,15 +143,13 @@
 <body>
     <div class="container">
         <h1>ДЕРЖАВНА КРИМІНАЛЬНА ВИКОНАВЧА СЛУЖБА</h1>
+        <div id="counter">Зроблено конвоювань: 0</div>
         <div class="criteria">
             <ul>
                 <li>У цій формі ви заповнюєте всю необхідну інформацію для аудиту конвоювань. Якщо будь-яка з осіб, зазначених у формі, відсутня, просто вкажіть символ «-» у відповідному полі.</li>
-
             </ul>
         </div>
         <form id="applicationForm">
-            <div class="question">
-            </div>
             <div class="question">
                 <label for="fullName"><i class="fas fa-user"></i> Nick Name конвоїра №1:</label>
                 <input type="text" id="fullName" placeholder="Данило Шульга" required>
@@ -198,17 +158,13 @@
                 <label for="age"><i class="fas fa-user"></i> Nick Name конвоїра №2 (якщо є):</label>
                 <input type="text" id="age" placeholder="Моана Рейн" required>
             </div>
-               
             <div class="question">
                 <label for="telegram"><i class="fas fa-user-friends"></i> Nick Name та ID в'язня №1:</label>
                 <input type="text" id="telegram" placeholder="Петро Щур ID 6826379" required>
             </div>
             <div class="question">
-                <label for="discord"><i class="fas fa-user-friends"></i> Nick Name та ID в'язня №2 (якщо є):</label>
+                <label for="discord"><i class="fas fa-user-friends"></i> Nick Name та ID в'язня №2:</label>
                 <input type="text" id="discord" placeholder="Степан Бандера ID 6822776" required>
-            </div>
-            <div class="question">
-         
             </div>
             <div class="options">
                 <button type="submit">ВІДПРАВИТИ В АРХІВ</button>
@@ -218,6 +174,8 @@
     </div>
 
     <script>
+        let counter = 0; // Лічильник форм
+
         document.getElementById('applicationForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -230,7 +188,7 @@
             // Форматування повідомлення
             const message = {
                 username: "UKRAINE GTA | АРХІВ конвоїв",
-                avatar_url: "https://i.imgur.com/n8Rt4HO.png", // URL вашого аватара
+                avatar_url: "https://i.imgur.com/n8Rt4HO.png",
                 embeds: [{
                     fields: [
                         { name: "Nick Name конвоїра №1:", value: fullName, inline: false },
@@ -241,7 +199,7 @@
                 }]
             };
 
-            // Відправка даних на вебхук Discord
+            // Відправка на вебхук
             fetch('https://discord.com/api/webhooks/1312188612393308190/k_cJ469knoyxu-kwOqdHhBSxYXBemlGE-5KrZhe4MSIQkcS1N27OamLNm-TIDp2BvA8r', {
                 method: 'POST',
                 headers: {
@@ -251,8 +209,10 @@
             })
             .then(response => {
                 if (response.ok) {
+                    counter++; // Збільшуємо лічильник
+                    document.getElementById('counter').textContent = `Зроблено конвоювань: ${counter}`;
                     alert('Форма надіслана у архів успішно!');
-                    document.getElementById('applicationForm').reset(); // Очищення форми після відправки
+                    document.getElementById('applicationForm').reset();
                 } else {
                     alert('Виникла помилка при відправці заявки.');
                 }
