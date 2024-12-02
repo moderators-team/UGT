@@ -177,56 +177,76 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script type="module">
-        // Імпортуємо Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+   <script type="module">
+    // Імпортуємо Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-        // Firebase конфігурація
-        const firebaseConfig = {
-            apiKey: "AIzaSyBzefxFDTHQqXFHg9t08JTiL5EaH8si1oY",
-            authDomain: "dkvs-1ec88.firebaseapp.com",
-            databaseURL: "https://dkvs-1ec88-default-rtdb.firebaseio.com/",
-            projectId: "dkvs-1ec88",
-            storageBucket: "dkvs-1ec88.appspot.com",
-            messagingSenderId: "167430647129",
-            appId: "1:167430647129:web:ab209fec7735f20b597048",
-            measurementId: "G-H6LKMLYD10"
-        };
+    // Firebase конфігурація
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzefxFDTHQqXFHg9t08JTiL5EaH8si1oY",
+        authDomain: "dkvs-1ec88.firebaseapp.com",
+        databaseURL: "https://dkvs-1ec88-default-rtdb.firebaseio.com/",
+        projectId: "dkvs-1ec88",
+        storageBucket: "dkvs-1ec88.appspot.com",
+        messagingSenderId: "167430647129",
+        appId: "1:167430647129:web:ab209fec7735f20b597048",
+        measurementId: "G-H6LKMLYD10"
+    };
 
-        // Ініціалізація Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    // Ініціалізація Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-        const counterRef = ref(db, 'counter');
+    const counterRef = ref(db, 'counter');
 
-        let counter = 0;
+    let counter = 0;
 
-        // Отримуємо поточне значення лічильника
-        onValue(counterRef, snapshot => {
-            counter = snapshot.val() || 0;
-            document.getElementById('counter').textContent = `Зроблено конвоювань: ${counter}`;
-        });
+    // Отримуємо поточне значення лічильника
+    onValue(counterRef, snapshot => {
+        counter = snapshot.val() || 0;
+        document.getElementById('counter').textContent = `Зроблено конвоювань: ${counter}`;
+    });
 
-        // Обробник форми
-        document.getElementById('applicationForm').addEventListener('submit', function (event) {
-            event.preventDefault();
+    // Функція для відправлення даних до Discord вебхука
+    async function sendToDiscord(data) {
+        const webhookUrl = "https://discord.com/api/webhooks/1313224054018277467/x7lJo19B3NxnVfdRkxNjRtAxeKpI8E3gQXkLwb54mOHxCnPivw1txt4kPYa81nCai0aB"; // Вставте URL вашого вебхука
+        try {
+            await fetch(webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                   username: "ДКВС", // Ім'я вебхука
+                avatar_url: "https://i.imgur.com/2Kwd6vU.png", // URL аватара
+                    content: `📋 **Нова форма конвоювань:**\n**Конвоїр №1:** ${data.fullName}\n**Конвоїр №2:** ${data.age}\n**В'язень №1:** ${data.telegram}\n**В'язень №2:** ${data.discord}`
+                }),
+            });
+            console.log("Дані успішно надіслані до Discord!");
+        } catch (error) {
+            console.error("Помилка надсилання до Discord:", error);
+        }
+    }
 
-            // Збираємо дані з форми
-            const fullName = document.getElementById('fullName').value;
-            const age = document.getElementById('age').value;
-            const telegram = document.getElementById('telegram').value;
-            const discord = document.getElementById('discord').value;
+    // Обробник форми
+    document.getElementById('applicationForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-            // Оновлюємо лічильник
-            counter++;
+        // Збираємо дані з форми
+        const fullName = document.getElementById('fullName').value;
+        const age = document.getElementById('age').value;
+        const telegram = document.getElementById('telegram').value;
+        const discord = document.getElementById('discord').value;
 
-            set(counterRef, counter); // Оновлення лічильника
+        // Оновлюємо лічильник
+        counter++;
 
-            alert('Форма надіслана у архів успішно!');
-            document.getElementById('applicationForm').reset();
-        });
-    </script>
-</body>
+        // Зберігаємо в Firebase
+        set(counterRef, counter);
 
-</html>
+        // Надсилаємо дані до Discord
+        await sendToDiscord({ fullName, age, telegram, discord });
+
+        alert('Форма надіслана у архів успішно!');
+        document.getElementById('applicationForm').reset();
+    });
+</script>
