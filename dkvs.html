@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Стилі залишаються без змін */
+        /* Основні стилі */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -138,8 +139,10 @@
                 width: 100%;
             }
         }
+
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>ДЕРЖАВНА КРИМІНАЛЬНА ВИКОНАВЧА СЛУЖБА</h1>
@@ -173,10 +176,40 @@
         </form>
     </div>
 
-    <script>
-        let counter = 0; // Лічильник форм
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Імпортуємо Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-        document.getElementById('applicationForm').addEventListener('submit', function(event) {
+        // Firebase конфігурація
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzefxFDTHQqXFHg9t08JTiL5EaH8si1oY",
+            authDomain: "dkvs-1ec88.firebaseapp.com",
+            databaseURL: "https://dkvs-1ec88-default-rtdb.firebaseio.com/",
+            projectId: "dkvs-1ec88",
+            storageBucket: "dkvs-1ec88.appspot.com",
+            messagingSenderId: "167430647129",
+            appId: "1:167430647129:web:ab209fec7735f20b597048",
+            measurementId: "G-H6LKMLYD10"
+        };
+
+        // Ініціалізація Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const counterRef = ref(db, 'counter');
+
+        let counter = 0;
+
+        // Отримуємо поточне значення лічильника
+        onValue(counterRef, snapshot => {
+            counter = snapshot.val() || 0;
+            document.getElementById('counter').textContent = `Зроблено конвоювань: ${counter}`;
+        });
+
+        // Обробник форми
+        document.getElementById('applicationForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
             // Збираємо дані з форми
@@ -185,43 +218,15 @@
             const telegram = document.getElementById('telegram').value;
             const discord = document.getElementById('discord').value;
 
-            // Форматування повідомлення
-            const message = {
-                username: "UKRAINE GTA | АРХІВ конвоїв",
-                avatar_url: "https://i.imgur.com/n8Rt4HO.png",
-                embeds: [{
-                    fields: [
-                        { name: "Nick Name конвоїра №1:", value: fullName, inline: false },
-                        { name: "Nick Name конвоїра №2:", value: age, inline: false },
-                        { name: "Nick Name та ID в'язня №1", value: telegram, inline: false },
-                        { name: "Nick Name та ID в'язня №2", value: discord, inline: false },
-                    ]
-                }]
-            };
+            // Оновлюємо лічильник
+            counter++;
 
-            // Відправка на вебхук
-            fetch('https://discord.com/api/webhooks/1312188612393308190/k_cJ469knoyxu-kwOqdHhBSxYXBemlGE-5KrZhe4MSIQkcS1N27OamLNm-TIDp2BvA8r', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(message)
-            })
-            .then(response => {
-                if (response.ok) {
-                    counter++; // Збільшуємо лічильник
-                    document.getElementById('counter').textContent = `Зроблено конвоювань: ${counter}`;
-                    alert('Форма надіслана у архів успішно!');
-                    document.getElementById('applicationForm').reset();
-                } else {
-                    alert('Виникла помилка при відправці заявки.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Виникла помилка при відправці заявки.');
-            });
+            set(counterRef, counter); // Оновлення лічильника
+
+            alert('Форма надіслана у архів успішно!');
+            document.getElementById('applicationForm').reset();
         });
     </script>
 </body>
+
 </html>
