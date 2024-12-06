@@ -51,6 +51,54 @@
             border-radius: 10px;
             text-align: center;
         }
+      
+        .options {
+    display: flex;
+    justify-content: center; /* Центрує кнопки */
+    gap: 10px; /* Відстань між кнопками */
+    margin-top: 20px; /* Простір над кнопками */
+         }
+      
+.submit-btn {
+    background: #4CAF50; /* Зелений */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+    text-shadow : 2px  2px  3px  #000000 ;
+  letter-spacing: 4px;
+}
+
+.submit-btn:hover {
+    background: #45a049; /* Трохи темніший зелений */
+    transform: scale(1.02);
+}
+
+/* Стиль для кнопки "ОЧИСТИТИ ФОРМУ" */
+.reset-btn {
+    background: #f44336; /* Червоний */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+    text-shadow : 2px  2px  3px  #000000 ;
+    letter-spacing: 4px;
+}
+
+.reset-btn:hover {
+    background: #d32f2f; /* Трохи темніший червоний */
+    transform: scale(1.02);
+}
+
+
 
         ul {
             margin-bottom: 20px;
@@ -170,8 +218,8 @@
                 <input type="text" id="discord" placeholder="ID 6822776" required>
             </div>
             <div class="options">
-                <button type="submit">ВІДПРАВИТИ В АРХІВ</button>
-                <button type="reset">ОЧИСТИТИ ФОРМУ</button>
+                <button type="submit" class="submit-btn">ВІДПРАВИТИ В АРХІВ</button>
+                <button type="reset" class="reset-btn">ОЧИСТИТИ ФОРМУ</button>
             </div>
         </form>
     </div>
