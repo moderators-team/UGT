@@ -353,6 +353,22 @@
                 <footer>
         &copy; 2024 ДКВС | UKRAINE GTA | Всі права захищені.                
     </footer>
+
+
+                 <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                    }
+                });
+            });
+
+            const targets = document.querySelectorAll(".halery-container");
+            targets.forEach((target) => observer.observe(target));
+        });
+    </script>
   
 </body>
 </html>
