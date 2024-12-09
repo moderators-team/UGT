@@ -29,6 +29,8 @@
          display: flex;
     justify-content: flex-end; /* Вирівнювання контейнера з текстом до правого краю */
     align-items: center; /* Центруємо текст по вертикалі */
+            idth: 100%;
+            height: 100%;
       }
       
       
@@ -42,7 +44,7 @@
         }
 
         .text-container p {
-            font-size: 20px;
+            font-size: 50px;
             line-height: 1.5;
         }
       
@@ -52,12 +54,31 @@
             width: 40%; /* Фото займає 45% ширини */
           
         }
+      
+
 
         .image-container img {
             width: 100%;
             height: auto;
             border-radius: 20px;
         }
+      
+    .halery-container {
+    width: 40%; /* Задаємо ширину */
+    opacity: 0; /* Початково приховане */
+    transform: translateY(20px); /* Трохи зсунуто вниз */
+    transition: opacity 3s ease, transform 3s ease; /* Плавний перехід */
+}
+      
+       .halery-container img {
+         border-radius: 10px;
+      }
+
+.halery-container.visible {
+    opacity: 1;
+    transform: translateY(0); /* Повертаємо на місце */
+}
+
       
       .head-children {
         text-align: center;
@@ -312,13 +333,26 @@
             <div class="viddil">
             <h1><span style="color: #244ea8;">Відділи у лавах ДКВС м.Дніпро</span></p></h1>
             
-             <div class="viddil-container">
-            <h3> <li>ВНБ - Відділ Нагляду Та Безпеки<li>ОВ - Оперативний Відділ<li>ВСПС - Відділ Соціально Психологічної Служби<li>НВ - Навчальний Відділ<li>НК - Навчальний Корпус</h3>
-            
+           <div class="viddil-container">
+    <h3> 
+        <ul>
+            <li>ВНБ - Відділ Нагляду Та Безпеки</li>
+            <li>ОВ - Оперативний Відділ</li>
+            <li>ВСПС - Відділ Соціально Психологічної Служби</li>
+            <li>НВ - Навчальний Відділ</li>
+            <li>НК - Навчальний Корпус</li>
+          <br><hr>
+        </ul>
+    </h3>
+</div>
+            <div class="halery-container">
+            <img src="https://i.imgur.com/doTqduR.png" alt="Фото 5" class="photo">
+        </div>
+    </div>
 
-               
                 <footer>
-        &copy; 2024 ДКВС | UKRAINE GTA | Всі права захищені.
+        &copy; 2024 ДКВС | UKRAINE GTA | Всі права захищені.                
     </footer>
+  
 </body>
 </html>
