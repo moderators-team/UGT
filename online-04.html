@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Онлайн Зміна</title>
+  <link rel="icon" href="https://i.imgur.com/lSeLN06.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Comfortaa', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #000000 url('https://i.imgur.com/JNKW51n.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+    .form-container {
+      width: 500px;
+      background-color: rgba(21, 21, 29, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+      color: #fff;
+      text-align: center;
+      position: relative;
+    }
+    .form-container h1 {
+      margin-bottom: 20px;
+    }
+    .form-banner {
+      width: 100%;
+      height: 150px;
+      background: url('https://i.imgur.com/qt6wcPg.jpeg') no-repeat center;
+      background-size: cover;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      filter: drop-shadow(5px 5px 10px #000000);
+    }
+    .form-container .block {
+      margin-bottom: 20px;
+      text-align: left;
+      padding: 10px;
+      border: 1px solid rgba(0, 123, 255, 0.2)
+;
+      border-radius: 5px;
+      background-color: rgba(50, 50, 60, 0.8);
+    }
+    .form-container label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .form-container label i {
+      margin-right: 10px;
+      color: #007BFF;
+    }
+    .form-container input, .form-container select, .form-container button {
+      width: 96%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    .form-container input, .form-container select {
+      background-color: rgba(21, 21, 29, 0.9);
+      color: white;
+    }
+    .form-container button {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+    .message.success {
+      color: #28a745;
+    }
+    .message.error {
+      color: #dc3545;
+    }
+    .form-container .radio-group {
+      display: flex;
+      justify-content: space-between;
+    }
+    .form-container .radio-group label {
+      flex: 1;
+      text-align: center;
+      background-color: #0F0F16;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+    .form-container .radio-group input {
+      display: none;
+    }
+    .form-container .radio-group input:checked + label {
+      background-color: #007BFF;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-banner"></div>
+    <h1>Онлайн Зміна #04</h1>
+    <h2><span style="color: #9A9893;">* * *</span></p></h2>
+    <p>Тут Ви вказуєте початок зміни та її кінець. При початку зміни - вказуєте лише час в пункті "Початок зміни", і з закінченням так само.</p>
+    <form id="shiftForm">
+      <div class="block">
+        <label for="nickname"><i class="fas fa-user"></i> Nick Name:</label>
+        <input type="text" id="nickname" placeholder="Введіть нікнейм" required>
+      </div>
+      <div class="block">
+        <label><i class="fas fa-check-circle"></i> Виберіть тип зміни:</label>
+        <div class="radio-group">
+          <input type="radio" id="startShift" name="shiftType" value="start">
+          <label for="startShift">Почав(ла)</label>
+
+          <input type="radio" id="endShift" name="shiftType" value="end">
+          <label for="endShift">Закінчив(ла)</label>
+        </div>
+      </div>
+
+      <div class="block">
+        <label for="time"><i class="fas fa-clock"></i> Час:</label>
+        <input type="time" id="time" required>
+      </div>
+
+      <button type="submit">Надіслати</button>
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+<script>
+  const form = document.getElementById('shiftForm');
+  const messageDiv = document.getElementById('message');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nickname = document.getElementById('nickname').value;
+    const startShift = document.getElementById('startShift').checked;
+    const endShift = document.getElementById('endShift').checked;
+    const time = document.getElementById('time').value;
+
+    // Перевірка заповнення форми
+    if (!nickname || (!startShift && !endShift) || !time) {
+      messageDiv.textContent = 'Будь ласка, заповніть усі поля!';
+      messageDiv.className = 'message error';
+      messageDiv.style.display = 'block';
+      console.log('Форма не заповнена правильно:', { nickname, startShift, endShift, time });
+      return;
+    }
+
+    const shiftType = startShift ? 'почав(ла)' : 'закінчив(ла)';
+    const webhookUrl = 'https://discord.com/api/webhooks/1317306971057160223/7LCPEWNQMu9M-vfP8WiIbBi3oDAkkHdhm9ol_eAtllPj5nqUKPjlDT53kGG8fl7sOJBt';
+    const googleSheetUrl = 'https://script.google.com/macros/s/AKfycby1Xws9S-j2Nit4L3-nssd3KcHPJoycb9hUS9s4QanBWWUyRme49Dc3fj0cLyEKn3ISjQ/exec';
+
+    const data = {
+      nickname,
+      shiftType,
+      time,
+    };
+
+    // Логування даних перед відправкою
+    console.log('Дані для відправки:', JSON.stringify(data));
+
+    try {
+      // Надсилання в Discord
+      console.log('Надсилання повідомлення в Discord...');
+      const discordResponse = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: `**${nickname}** ${shiftType} онлайн зміну о ${time}`,
+        }),
+      });
+
+      if (!discordResponse.ok) {
+        throw new Error('Не вдалося надіслати повідомлення в Discord');
+      }
+      console.log('Повідомлення надіслано в Discord.');
+
+      // Надсилання в Google Sheets
+      console.log('Надсилання даних в Google Sheets...');
+      const googleSheetResponse = await fetch(googleSheetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!googleSheetResponse.ok) {
+        console.log('Помилка в Google Sheets:', googleSheetResponse.status, googleSheetResponse.statusText);
+        throw new Error('Не вдалося надіслати дані в Google Sheets');
+      }
+      console.log('Дані надіслані в Google Sheets.');
+
+      messageDiv.textContent = 'Дані успішно надіслані!';
+      messageDiv.className = 'message success';
+      messageDiv.style.display = 'block';
+      form.reset();
+    } catch (error) {
+      // Логування помилки
+      console.error('Помилка при надсиланні даних:', error);
+      messageDiv.textContent = `Помилка при надсиланні даних: ${error.message}`;
+      messageDiv.className = 'message error';
+      messageDiv.style.display = 'block';
+    }
+  });
+</script>
