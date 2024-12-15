@@ -48,8 +48,7 @@
       margin-bottom: 20px;
       text-align: left;
       padding: 10px;
-      border: 1px solid rgba(0, 123, 255, 0.2)
-;
+      border: 1px solid rgba(0, 123, 255, 0.2);
       border-radius: 5px;
       background-color: rgba(50, 50, 60, 0.8);
     }
@@ -121,27 +120,27 @@
   <div class="form-container">
     <div class="form-banner"></div>
     <h1>Онлайн Зміна #04</h1>
-    <h2><span style="color: #9A9893;">* * *</span></p></h2>
+    <h2><span style="color: #9A9893;">* * *</span></h2>
     <p>Тут Ви вказуєте початок зміни та її кінець. При початку зміни - вказуєте лише час в пункті "Початок зміни", і з закінченням так само.</p>
     <form id="shiftForm">
       <div class="block">
         <label for="nickname"><i class="fas fa-user"></i> Nick Name:</label>
-        <input type="text" id="nickname" placeholder="Введіть нікнейм" required>
+        <input type="text" id="nickname" name="nickname" placeholder="Введіть нікнейм" required>
       </div>
       <div class="block">
         <label><i class="fas fa-check-circle"></i> Виберіть тип зміни:</label>
         <div class="radio-group">
-          <input type="radio" id="startShift" name="shiftType" value="start">
-          <label for="startShift">Почав(ла)</label>
+          <input type="radio" id="startShift" name="shiftType" value="start" required>
+          <label for="startShift">Почав(ла) онлайн зміну</label>
 
-          <input type="radio" id="endShift" name="shiftType" value="end">
-          <label for="endShift">Закінчив(ла)</label>
+          <input type="radio" id="endShift" name="shiftType" value="end" required>
+          <label for="endShift">Закінчив(ла) онлайн зміну</label>
         </div>
       </div>
 
       <div class="block">
         <label for="time"><i class="fas fa-clock"></i> Час:</label>
-        <input type="time" id="time" required>
+        <input type="time" id="time" name="time" required>
       </div>
 
       <button type="submit">Надіслати</button>
@@ -150,79 +149,98 @@
   </div>
 
 <script>
-  const form = document.getElementById('shiftForm');
-  const messageDiv = document.getElementById('message');
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const form = document.getElementById('shiftForm');
+    const messageDiv = document.getElementById('message');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const nickname = document.getElementById('nickname').value;
-    const startShift = document.getElementById('startShift').checked;
-    const endShift = document.getElementById('endShift').checked;
-    const time = document.getElementById('time').value;
+      // Створення об'єкта FormData для збору всіх значень
+      const formData = new FormData(form);
 
-    // Перевірка заповнення форми
-    if (!nickname || (!startShift && !endShift) || !time) {
-      messageDiv.textContent = 'Будь ласка, заповніть усі поля!';
-      messageDiv.className = 'message error';
-      messageDiv.style.display = 'block';
-      console.log('Форма не заповнена правильно:', { nickname, startShift, endShift, time });
-      return;
-    }
+      // Збір значень із FormData
+      const nickname = formData.get('nickname');
+      const startShift = formData.get('shiftType') === 'start';
+      const endShift = formData.get('shiftType') === 'end';
+      const time = formData.get('time');
 
-    const shiftType = startShift ? 'почав(ла)' : 'закінчив(ла)';
-    const webhookUrl = 'https://discord.com/api/webhooks/1317306971057160223/7LCPEWNQMu9M-vfP8WiIbBi3oDAkkHdhm9ol_eAtllPj5nqUKPjlDT53kGG8fl7sOJBt';
-    const googleSheetUrl = 'https://script.google.com/macros/s/AKfycby1Xws9S-j2Nit4L3-nssd3KcHPJoycb9hUS9s4QanBWWUyRme49Dc3fj0cLyEKn3ISjQ/exec';
-
-    const data = {
-      nickname,
-      shiftType,
-      time,
-    };
-
-    // Логування даних перед відправкою
-    console.log('Дані для відправки:', JSON.stringify(data));
-
-    try {
-      // Надсилання в Discord
-      console.log('Надсилання повідомлення в Discord...');
-      const discordResponse = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: `**${nickname}** ${shiftType} онлайн зміну о ${time}`,
-        }),
-      });
-
-      if (!discordResponse.ok) {
-        throw new Error('Не вдалося надіслати повідомлення в Discord');
+      // Перевірка заповнення форми
+      if (!nickname || (!startShift && !endShift) || !time) {
+        messageDiv.textContent = 'Будь ласка, заповніть усі поля!';
+        messageDiv.className = 'message error';
+        messageDiv.style.display = 'block';
+        return;
       }
-      console.log('Повідомлення надіслано в Discord.');
 
-      // Надсилання в Google Sheets
-      console.log('Надсилання даних в Google Sheets...');
-      const googleSheetResponse = await fetch(googleSheetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+      const shiftType = startShift ? 'почав(ла) онлайн зміну' : 'закінчив(ла) онлайн зміну';
+      const googleSheetUrl = 'https://script.google.com/macros/s/AKfycbypDvLSGGVU8mtJlKyKcLbA8H5mQ7mwnE9YQmsYW__rQ3oLVULhErr07HGJqbmxggEs5w/exec';
+      const webhookUrl = 'https://discord.com/api/webhooks/1317306971057160223/7LCPEWNQMu9M-vfP8WiIbBi3oDAkkHdhm9ol_eAtllPj5nqUKPjlDT53kGG8fl7sOJBt';
 
-      if (!googleSheetResponse.ok) {
-        console.log('Помилка в Google Sheets:', googleSheetResponse.status, googleSheetResponse.statusText);
-        throw new Error('Не вдалося надіслати дані в Google Sheets');
+      const data = {
+        nickname,
+        shiftType,
+        time,
+      };
+
+      try {
+        // Перетворення даних у формат URLSearchParams для Google Sheets
+        const urlEncodedData = new URLSearchParams();
+        Object.keys(data).forEach(key => {
+          urlEncodedData.append(key, data[key]);
+        });
+
+        // Відправка даних до Google Sheets
+        const googleSheetResponse = await fetch(googleSheetUrl, {
+          method: 'POST',
+          body: urlEncodedData.toString(),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+
+        if (googleSheetResponse.ok) {
+          console.log('Дані надіслані в Google Sheets.');
+        } else {
+          throw new Error('Не вдалося надіслати дані в Google Sheets');
+        }
+
+        // Відправка повідомлення в Discord
+        const discordResponse = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: 'UKRAINE GTA #04',
+            avatar_url: 'https://i.imgur.com/tfPENbR.png',
+            content: `**${nickname}** ${shiftType} онлайн зміну о ${time}`,
+          }),
+        });
+
+        if (discordResponse.ok) {
+          console.log('Повідомлення надіслано в Discord.');
+        } else {
+          throw new Error('Не вдалося надіслати повідомлення в Discord');
+        }
+
+        // Виведення повідомлення про успішну відправку
+        messageDiv.textContent = 'Дані успішно надіслані!';
+        messageDiv.className = 'message success';
+        messageDiv.style.display = 'block';
+        form.reset(); // Скидання форми
+        
+        setTimeout(() => {
+          messageDiv.style.display = 'none';
+        }, 5000); // Сховати повідомлення через 5 секунд
+        form.reset(); // Скидання форми
+
+      } catch (error) {
+        console.error('Помилка при відправленні:', error);
+        messageDiv.textContent = `Помилка при відправленні: ${error.message}`;
+        messageDiv.className = 'message error';
+        messageDiv.style.display = 'block';
       }
-      console.log('Дані надіслані в Google Sheets.');
-
-      messageDiv.textContent = 'Дані успішно надіслані!';
-      messageDiv.className = 'message success';
-      messageDiv.style.display = 'block';
-      form.reset();
-    } catch (error) {
-      // Логування помилки
-      console.error('Помилка при надсиланні даних:', error);
-      messageDiv.textContent = `Помилка при надсиланні даних: ${error.message}`;
-      messageDiv.className = 'message error';
-      messageDiv.style.display = 'block';
-    }
+    });
   });
 </script>
+</body>
+</html>
