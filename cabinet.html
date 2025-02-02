@@ -6,7 +6,7 @@
     <title>M.D 04 | Панель управління</title>
     <link rel="icon" href="https://i.imgur.com/fQLBeQ9.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --main-bg-color: #0a192f;
@@ -263,10 +263,10 @@
             <section class="profile-section">
                 <img src="https://i.imgur.com/JWlrX1h.png" alt="Фото профілю" class="profile-photo" id="profile-photo">
                 <div class="profile-info">
-                    <h1>Вітаємо, <span id="username-display"></span>!</h1>
-                    <p>Посада: <span id="role-display"></span></p>
-                    <p>Дата призначення: <span id="appointment-date"></span></p>
-                    <p>Днів на посаді: <span id="days-counter"></span></p>
+                    <h1>Вітаємо, <span id="username-display">Користувач</span>!</h1>
+                    <p>Посада: <span id="role-display">Завантаження...</span></p>
+                    <p>Дата призначення: <span id="appointment-date">Завантаження...</span></p>
+                    <p>Днів на посаді: <span id="days-counter">Завантаження...</span></p>
                 </div>
             </section>
         </div>
@@ -336,7 +336,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
         import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -356,27 +356,25 @@
 
         let currentUser = null;
 
-        window.onload = function() {
-            const userId = localStorage.getItem('currentUser');
-            if (!userId) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = userId;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user.uid;
                 loadUserData();
                 loadAchievements();
                 setupNotifications();
-                setupNavigation();
+            } else {
+                window.location.href = 'login.html';
             }
-        };
+        });
 
         function loadUserData() {
             const userRef = ref(db, 'users/' + currentUser);
             get(userRef).then((snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    document.getElementById('username-display').textContent = data.nickname || currentUser;
+                    document.getElementById('username-display').textContent = data.nickname || 'Користувач';
                     document.getElementById('role-display').textContent = data.role || 'Не вказано';
-                    document.getElementById('appointment-date').textContent = new Date(data.appointmentDate).toLocaleDateString('uk-UA');
+                    document.getElementById('appointment-date').textContent = data.appointmentDate ? new Date(data.appointmentDate).toLocaleDateString('uk-UA') : 'Не вказано';
                     document.getElementById('reprimandCounter').textContent = data.reprimandCounter || '0/2';
                     document.getElementById('warningCounter').textContent = data.warningCounter || '0/3';
                     document.getElementById('onlineChangesCounter').textContent = (data.onlineChangesCounter || 0) + ' годин';
@@ -386,22 +384,19 @@
                     document.getElementById('finesCounter').textContent = (data.finesCounter || 0) + '%';
                     document.getElementById('vidpustkaCounter').textContent = (data.vidpustkaCounter || 0) + ' днів';
 
-                    const appointmentDate = new Date(data.appointmentDate);
-                    const today = new Date();
-                    const timeDifference = today - appointmentDate;
-                    const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-                    document.getElementById('days-counter').textContent = dayDifference || 0;
+                    if (data.appointmentDate) {
+                        const appointmentDate = new Date(data.appointmentDate);
+                        const today = new Date();
+                        const timeDifference = today - appointmentDate;
+                        const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                        document.getElementById('days-counter').textContent = dayDifference;
+                    } else {
+                        document.getElementById('days-counter').textContent = 'Не вказано';
+                    }
 
                     if (data.photoURL) {
                         document.getElementById('profile-photo').src = data.photoURL;
                     }
-                } else {
-                    console.warn("Користувача не знайдено в базі даних!");
-                }
-            }).catch((error) => {Here's the continuation of the text stream from the cut-off point:
-
-warn("Користувача не знайдено в базі даних!");
                 }
             }).catch((error) => {
                 console.error("Помилка отримання даних:", error);
@@ -425,6 +420,8 @@ warn("Користувача не знайдено в базі даних!");
                         achievementsContainer.appendChild(achievementElement);
                     }
                 }
+            }).catch((error) => {
+                console.error("Помилка отримання досягнень:", error);
             });
         }
 
@@ -489,12 +486,13 @@ warn("Користувача не знайдено в базі даних!");
 
         document.getElementById('logout-btn').addEventListener('click', function() {
             signOut(auth).then(() => {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
+                window.location.href = 'login.html';
             }).catch((error) => {
                 console.error("Помилка виходу:", error);
             });
         });
+
+        setupNavigation();
     </script>
 </body>
 </html>
