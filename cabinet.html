@@ -3,327 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мій кабінет</title>
+    <title>Мій кабінет | M.D 04</title>
     <link rel="icon" href="https://i.imgur.com/fQLBeQ9.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --main-bg-color: rgba(0, 0, 9, 0.9);
-            --text-color: white;
-            --accent-color: #FFA500;
-            --button-hover-bg: rgba(255, 0, 0, 0.25);
+            --main-bg-color: #1a1a2e;
+            --card-bg-color: #16213e;
+            --text-color: #e94560;
+            --accent-color: #0f3460;
+            --hover-color: #533483;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Comfortaa', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background-color: var(--main-bg-color);
-            background-image: url('https://i.imgur.com/gxpN7VC.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logout-btn {
-            display: inline-flex;
-            align-items: center;
-            background-color: rgba(255, 0, 0, 0.15);
-            color: var(--text-color);
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            transition: background-color 0.3s ease;
-            font-weight: 400;
-        }
-
-        .logout-btn img {
-            margin-right: 8px;
-            width: 20px;
-            height: 20px;
-        }
-
-        .logout-btn:hover {
-            background-color: var(--button-hover-bg);
-        }
-
-        h1, h2 {
-            margin-top: 5px;
-            font-weight: 700;
-        }
-
-        .moderator-photo {
-            width: 250px;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 15px;
-            margin-top: 5px;
-            float: left;
-            margin-right: 30px;
+            line-height: 1.6;
         }
 
         .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
 
-        .counter-box {
-            height: 100px;
-            border-radius: 10px;
-            text-align: center;
-            padding: 10px;
-            transition: background-color 0.3s ease;
-            color: var(--text-color);
+        header {
+            background-color: var(--card-bg-color);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .counter-box:hover {
-            background-color: rgba(255, 255, 255, 0.35);
-        }
-
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-top: 20px;
-        }
-
-        .action-btn {
-            width: 250px;
-            background-color: rgba(255, 0, 0, 0.10);
-            color: var(--text-color);
-            padding: 10px 0;
-            border: 1px solid rgba(255, 102, 102, 0.75);
-            cursor: pointer;
-            border-radius: 55px;
-            margin-bottom: 15px;
-            transition: background-color 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background-color: var(--button-hover-bg);
-        }
-
-        .yellow, .cyan, .purple, .red, .green, .blue, .orange, .pink, .teal, .lime {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.75);
-        }
-
-        .counter-title {
-            font-size: 14px;
-        }
-
-        .counter-value, .counter-valu {
-            font-size: 28px;
+        .logo {
+            font-size: 24px;
             font-weight: bold;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--hover-color);
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 40px;
+        }
+
+        .profile-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 40px;
+            border: 4px solid var(--accent-color);
+        }
+
+        .profile-info h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .profile-info p {
+            font-size: 18px;
+            color: #888;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card i {
+            font-size: 36px;
+            margin-bottom: 10px;
             color: var(--accent-color);
         }
 
-        footer {
-            background-color: #111;
-            color: var(--text-color);
-            padding: 10px 0;
-            text-align: center;
-            font-size: 14px;
-            margin-top: auto;
-            width: 100%;
+        .stat-card h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
         }
 
-        /* Нові стилі для налаштувань профілю */
-        .profile-settings {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .profile-settings h2 {
-            margin-bottom: 15px;
-        }
-
-        .profile-settings input[type="text"],
-        .profile-settings input[type="email"],
-        .profile-settings input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background-color: rgba(0, 0, 0, 0.2);
+        .stat-card p {
+            font-size: 24px;
+            font-weight: bold;
             color: var(--text-color);
         }
 
-        .profile-settings button {
-            background-color: var(--accent-color);
-            color: var(--main-bg-color);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        .achievements-section {
+            margin-top: 40px;
         }
 
-        .profile-settings button:hover {
-            background-color: #ff8c00;
-        }
-
-        /* Стилі для системи досягнень */
-        .achievements {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
             margin-top: 20px;
         }
 
         .achievement {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: var(--accent-color);
+            background-color: var(--card-bg-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
             transition: transform 0.3s ease;
         }
 
         .achievement:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
-        /* Стилі для системи сповіщень */
+        .achievement i {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .achievement p {
+            font-size: 14px;
+        }
+
         .notifications {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 300px;
             z-index: 1000;
         }
 
         .notification {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--main-bg-color);
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        footer {
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
         }
 
         @media (max-width: 768px) {
-            .container {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-
-            .moderator-photo {
-                float: none;
-                margin: 0 auto 20px;
-                display: block;
-            }
-
-            .button-container {
+            .profile-section {
+                flex-direction: column;
                 align-items: center;
             }
 
-            .profile-settings, .achievements {
-                margin-top: 20px;
+            .profile-photo {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .profile-info {
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <h1>👋 Привіт, <span id="username-display"></span>! Це твоя основна інформація!</h1>
-    <img src="https://i.imgur.com/JWlrX1h.png" alt="Moderator Photo" class="moderator-photo" id="profile-photo">
+    <header>
+        <nav class="container">
+            <div class="logo">M.D 04</div>
+            <div class="nav-links">
+                <a href="#profile">Профіль</a>
+                <a href="#stats">Статистика</a>
+                <a href="#achievements">Досягнення</a>
+                <a href="#" id="logout-btn">Вийти</a>
+            </div>
+        </nav>
+    </header>
 
-    <div class="container">
-        <div class="counter-box yellow">
-            <div class="counter-title">Кількість днів на посаді</div>
-            <div class="counter-value" id="daysCounter">0</div>
-        </div>
-        <div class="counter-box cyan">
-            <div class="counter-title">Кількість доган</div>
-            <div class="counter-value" id="reprimandCounter">0/2</div>
-        </div>
-        <div class="counter-box purple">
-            <div class="counter-title">Кількість попереджень</div>
-            <div class="counter-value" id="warningCounter">0/3</div>
-        </div>
-        <div class="counter-box red">
-            <div class="counter-title">Кількість онлайн змін (годин)</div>
-            <div class="counter-valu" id="onlineChangesCounter">0</div>
-        </div>
-        <div class="counter-box green">
-            <div class="counter-title">Кількість покарань</div>
-            <div class="counter-value" id="punishmentsCounter">0</div>
-        </div>
-        <div class="counter-box blue">
-            <div class="counter-title">Кількість попереджень</div>
-            <div class="counter-value" id="warningsCounter">0</div>
-        </div>
-        <div class="counter-box orange">
-            <div class="counter-title">К-сть відповідей у "питання до тех-підтримки"</div>
-            <div class="counter-value" id="techSupportCounter">0</div>
-        </div>
-        <div class="counter-box pink">
-            <div class="counter-title">Кількість премії</div>
-            <div class="counter-value" id="bonusCounter">0%</div>
-        </div>
-        <div class="counter-box teal">
-            <div class="counter-title">Кількість штрафів</div>
-            <div class="counter-value" id="finesCounter">0%</div>
-        </div>
-        <div class="counter-box lime">
-            <div class="counter-title">К-сть днів неактивів/відпусток</div>
-            <div class="counter-value" id="vidpustkaCounter">0 Days</div>
-        </div>
-    </div>
+    <main class="container">
+        <section id="profile" class="profile-section">
+            <img src="https://i.imgur.com/JWlrX1h.png" alt="Фото профілю" class="profile-photo" id="profile-photo">
+            <div class="profile-info">
+                <h1>Привіт, <span id="username-display"></span>!</h1>
+                <p>Ваша посада: <span id="role-display"></span></p>
+                <p>Дата призначення: <span id="appointment-date"></span></p>
+            </div>
+        </section>
 
-    <div class="button-container">
-        <button class="action-btn" onclick="window.location.href='https://sites.google.com/view/md-04-site/info-md?authuser=0'">INFO M.D</button>
-        <button class="action-btn" onclick="window.location.href='https://sites.google.com/view/md-04-site/%D0%BA%D0%BE%D1%80%D0%B8%D1%81%D0%BD%D0%B0-%D1%96%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D1%96%D1%8F?authuser=0'">Довідник</button>
-    </div>
+        <section id="stats" class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-calendar-day"></i>
+                <h3>Днів на посаді</h3>
+                <p id="daysCounter">0</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Догани</h3>
+                <p id="reprimandCounter">0/2</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Попередження</h3>
+                <p id="warningCounter">0/3</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h3>Онлайн зміни</h3>
+                <p id="onlineChangesCounter">0 годин</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-gavel"></i>
+                <h3>Покарання</h3>
+                <p id="punishmentsCounter">0</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-headset"></i>
+                <h3>Відповіді тех. підтримки</h3>
+                <p id="techSupportCounter">0</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-gift"></i>
+                <h3>Премія</h3>
+                <p id="bonusCounter">0%</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-minus-circle"></i>
+                <h3>Штрафи</h3>
+                <p id="finesCounter">0%</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-umbrella-beach"></i>
+                <h3>Дні відпустки</h3>
+                <p id="vidpustkaCounter">0 днів</p>
+            </div>
+        </section>
 
-    <div class="profile-settings">
-        <h2>Налаштування профілю</h2>
-        <input type="text" id="nickname" placeholder="Нікнейм">
-        <input type="email" id="email" placeholder="Email">
-        <input type="file" id="photo" accept="image/*">
-        <button onclick="updateProfile()">Оновити профіль</button>
-    </div>
-
-    <h2>Досягнення</h2>
-    <div class="achievements" id="achievements">
-        <!-- Досягнення будуть додані динамічно -->
-    </div>
+        <section id="achievements" class="achievements-section">
+            <h2>Досягнення</h2>
+            <div class="achievements-grid" id="achievements-container">
+                <!-- Досягнення будуть додані динамічно -->
+            </div>
+        </section>
+    </main>
 
     <div class="notifications" id="notifications">
         <!-- Сповіщення будуть додані динамічно -->
     </div>
 
-    <button class="logout-btn" onclick="logout()">
-        <img src="https://i.imgur.com/dtvfULB.png" alt="Вийти"> Вийти з кабінету
-    </button>
+    <footer>
+        <p>&copy; 2024 M.D 04 | UKRAINE GTA | Всі права захищені.</p>
+        <p>Сайт розробив Senior Moderator 04 server Daniil Shulga</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
         import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
-        import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-storage.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyActJbyO19Id6kORysVIHLfuszxpOJIAhU",
@@ -339,7 +325,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        const storage = getStorage(app);
 
         let currentUser = null;
 
@@ -361,15 +346,16 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     document.getElementById('username-display').textContent = data.nickname || currentUser;
+                    document.getElementById('role-display').textContent = data.role || 'Не вказано';
+                    document.getElementById('appointment-date').textContent = new Date(data.appointmentDate).toLocaleDateString('uk-UA');
                     document.getElementById('reprimandCounter').textContent = data.reprimandCounter || '0/2';
                     document.getElementById('warningCounter').textContent = data.warningCounter || '0/3';
-                    document.getElementById('onlineChangesCounter').textContent = data.onlineChangesCounter || 0;
+                    document.getElementById('onlineChangesCounter').textContent = (data.onlineChangesCounter || 0) + ' годин';
                     document.getElementById('punishmentsCounter').textContent = data.punishmentsCounter || 0;
-                    document.getElementById('warningsCounter').textContent = data.warningsCounter || 0;
                     document.getElementById('techSupportCounter').textContent = data.techSupportCounter || 0;
-                    document.getElementById('bonusCounter').textContent = data.bonusCounter || "0%";
-                    document.getElementById('finesCounter').textContent = data.finesCounter || "0%";
-                    document.getElementById('vidpustkaCounter').textContent = data.vidpustkaCounter || "0 Days";
+                    document.getElementById('bonusCounter').textContent = (data.bonusCounter || 0) + '%';
+                    document.getElementById('finesCounter').textContent = (data.finesCounter || 0) + '%';
+                    document.getElementById('vidpustkaCounter').textContent = (data.vidpustkaCounter || 0) + ' днів';
 
                     const appointmentDate = new Date(data.appointmentDate);
                     const today = new Date();
@@ -381,9 +367,6 @@
                     if (data.photoURL) {
                         document.getElementById('profile-photo').src = data.photoURL;
                     }
-
-                    document.getElementById('nickname').value = data.nickname || '';
-                    document.getElementById('email').value = data.email || '';
                 } else {
                     console.warn("Користувача не знайдено в базі даних!");
                 }
@@ -392,54 +375,20 @@
             });
         }
 
-        function updateProfile() {
-            const nickname = document.getElementById('nickname').value;
-            const email = document.getElementById('email').value;
-            const photoFile = document.getElementById('photo').files[0];
-
-            const userRef = ref(db, 'users/' + currentUser);
-
-            if (photoFile) {
-                const photoRef = storageRef(storage, 'profile_photos/' + currentUser);
-                uploadBytes(photoRef, photoFile).then((snapshot) => {
-                    getDownloadURL(snapshot.ref).then((downloadURL) => {
-                        set(userRef, {
-                            nickname: nickname,
-                            email: email,
-                            photoURL: downloadURL
-                        }).then(() => {
-                            alert('Профіль оновлено успішно!');
-                            loadUserData();
-                        }).catch((error) => {
-                            console.error("Помилка оновлення профілю:", error);
-                        });
-                    });
-                });
-            } else {
-                set(userRef, {
-                    nickname: nickname,
-                    email: email
-                }).then(() => {
-                    alert('Профіль оновлено успішно!');
-                    loadUserData();
-                }).catch((error) => {
-                    console.error("Помилка оновлення профілю:", error);
-                });
-            }
-        }
-
         function loadAchievements() {
             const achievementsRef = ref(db, 'achievements/' + currentUser);
             get(achievementsRef).then((snapshot) => {
                 if (snapshot.exists()) {
                     const achievements = snapshot.val();
-                    const achievementsContainer = document.getElementById('achievements');
+                    const achievementsContainer = document.getElementById('achievements-container');
                     achievementsContainer.innerHTML = '';
                     for (let achievement in achievements) {
                         const achievementElement = document.createElement('div');
                         achievementElement.className = 'achievement';
-                        achievementElement.innerHTML = achievements[achievement].icon;
-                        achievementElement.title = achievements[achievement].title;
+                        achievementElement.innerHTML = `
+                            <i class="${achievements[achievement].icon}"></i>
+                            <p>${achievements[achievement].title}</p>
+                        `;
                         achievementsContainer.appendChild(achievementElement);
                     }
                 }
@@ -453,11 +402,15 @@
                     const notifications = snapshot.val();
                     const notificationsContainer = document.getElementById('notifications');
                     notificationsContainer.innerHTML = '';
+                    
                     for (let notificationId in notifications) {
                         const notification = notifications[notificationId];
                         const notificationElement = document.createElement('div');
                         notificationElement.className = 'notification';
-                        notificationElement.textContent = notification.message;
+                        notificationElement.innerHTML = `
+                            <i class="${notification.icon || 'fas fa-bell'}"></i>
+                            <span>${notification.message}</span>
+                        `;
                         notificationsContainer.appendChild(notificationElement);
                         setTimeout(() => {
                             notificationElement.style.opacity = '0';
@@ -470,21 +423,14 @@
             });
         }
 
-        window.updateProfile = updateProfile;
-
-        window.logout = function() {
+        document.getElementById('logout-btn').addEventListener('click', function() {
             signOut(auth).then(() => {
                 localStorage.removeItem('currentUser');
                 window.location.href = 'index.html';
             }).catch((error) => {
                 console.error("Помилка виходу:", error);
             });
-        };
+        });
     </script>
-
-    <footer>
-        &copy; 2024 M.D 04 | UKRAINE GTA | Всі права захищені.
-        <p>Сайт розробив Senior Moderator 04 server Daniil Shulga</p>
-    </footer>
 </body>
 </html>
