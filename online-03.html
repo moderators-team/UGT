@@ -242,16 +242,40 @@
 
             console.log('Дані успішно відправлені на Google Sheets');
 
-            console.log('Відправка даних на Discord...');
-            const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                username: 'UKRAINE GTA #03',
-                avatar_url: 'https://i.imgur.com/xo3FMmt.jpeg',
-                content: `**${nickname}** ${shiftType} онлайн зміну о ${time}`,
-              }),
-            });
+           console.log('Відправка даних на Discord...');
+const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    username: 'UKRAINE GTA #04',
+    avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
+    embeds: [{
+      color: startShift ? 0x00ff00 : 0xff0000, // Зелений для початку зміни, червоний для кінця
+      title: startShift ? '🟢 Початок онлайн зміни' : '🔴 Кінець онлайн зміни',
+      description: `**${nickname}** ${shiftType}`,
+      fields: [
+        {
+          name: '⏰ Час',
+          value: time,
+          inline: true
+        },
+        {
+          name: '📅 Дата',
+          value: new Date().toLocaleDateString('uk-UA', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          inline: true
+        }
+      ],
+      footer: {
+        text: 'UKRAINE GTA #04 - Система обліку онлайн змін'
+      },
+      timestamp: new Date().toISOString()
+    }]
+  }),
+});
 
             if (!discordResponse.ok) {
               console.error('Помилка відповіді Discord:', await discordResponse.text());
