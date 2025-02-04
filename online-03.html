@@ -7,6 +7,8 @@
   <link rel="icon" href="https://i.imgur.com/lSeLN06.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <style>
     body {
       font-family: 'Comfortaa', sans-serif;
@@ -132,45 +134,23 @@
         margin: 0 5px;
       }
     }
-  </style>
-</head>
-<body>
-  <div class="form-container">
-    <div class="form-banner"></div>
-    <h1>Онлайн Зміна #03</h1>
-    <h2><span style="color: #9A9893;">* * *</span></h2>
-    <p>Тут Ви вказуєте початок зміни та її кінець. При початку зміни - вказуєте лише час в пункті "Початок зміни", і з закінченням так само.</p>
-    <form id="shiftForm">
-      <div class="block">
-        <label for="nickname"><i class="fas fa-user"></i> Nick Name:</label>
-        <input type="text" id="nickname" name="nickname" placeholder="Введіть нікнейм" required>
-      </div>
-      <div class="block">
-        <label><i class="fas fa-check-circle"></i> Виберіть тип зміни:</label>
-        <div class="radio-group">
-          <input type="radio" id="startShift" name="shiftType" value="start" required>
-          <label for="startShift">Почав(ла) онлайн зміну</label>
+ <script>
+    // Конфігурація Firebase
+    const firebaseConfig = {
+      databaseURL: "https://online-ukraine-gta-default-rtdb.firebaseio.com"
+    };
 
-          <input type="radio" id="endShift" name="shiftType" value="end" required>
-          <label for="endShift">Закінчив(ла) онлайн зміну</label>
-        </div>
-      </div>
+    // Ініціалізація Firebase
+    firebase.initializeApp(firebaseConfig);
 
-      <div class="block">
-        <label for="time"><i class="fas fa-clock"></i> Час:</label>
-        <input type="time" id="time" name="time" required>
-      </div>
-
-      <button type="submit">Надіслати</button>
-    </form>
-    <div id="message" class="message"></div>
-  </div>
-
-<script src="config03.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
+    document.addEventListener('DOMContentLoaded', async (event) => {
       const form = document.getElementById('shiftForm');
       const messageDiv = document.getElementById('message');
+
+      // Отримання конфігурації з Firebase
+      const dbRef = firebase.database().ref('config');
+      const snapshot = await dbRef.once('value');
+      const CONFIG = snapshot.val();
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -244,5 +224,7 @@
       });
     });
   </script>
+</body>
+</html>
 </body>
 </html>
