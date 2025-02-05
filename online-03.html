@@ -247,7 +247,7 @@ const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    username: 'UKRAINE GTA #04',
+    username: 'UKRAINE GTA #03',
     avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
     embeds: [{
       color: startShift ? 0x00ff00 : 0xff0000, // Зелений для початку зміни, червоний для кінця
@@ -270,7 +270,7 @@ const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
         }
       ],
       footer: {
-        text: 'UKRAINE GTA #04 - Система обліку онлайн змін'
+        text: 'UKRAINE GTA #03 - Система обліку онлайн змін'
       },
       timestamp: new Date().toISOString()
     }]
