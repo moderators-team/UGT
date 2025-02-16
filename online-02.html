@@ -270,7 +270,7 @@ const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
         }
       ],
       footer: {
-        text: 'UKRAINE GTA #04 - Система обліку онлайн змін'
+        text: 'UKRAINE GTA #02 - Система обліку онлайн змін'
       },
       timestamp: new Date().toISOString()
     }]
@@ -296,7 +296,7 @@ const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
 
       } catch (error) {
         console.error('Помилка ініціалізації:', error);
-        showMessage('Помилка ініціалізації додатку. Будь ласка, спробуйте пізніше.', true);
+        showMessage('Помилка отримання даних Firebase. Будь ласка, зв'яжіться із розробником @daniil_staff.', true);
       }
     });
   </script>
