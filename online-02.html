@@ -1,354 +1,451 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Онлайн Зміна</title>
-  <link rel="icon" href="https://i.imgur.com/lSeLN06.png" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <style>
-    body {
-      font-family: 'Comfortaa', sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #000000 url('https://i.imgur.com/JNKW51n.png');
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Онлайн Зміна</title>
+<link rel="icon" href="https://i.imgur.com/lSeLN06.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<style>
+  body {
+    font-family: 'Comfortaa', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000000 url('https://i.imgur.com/JNKW51n.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  .form-container {
+    width: 90%;
+    max-width: 500px;
+    background-color: rgba(21, 21, 29, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    text-align: center;
+    position: relative;
+  }
+  .form-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  .form-container h2 {
+    font-size: 20px;
+  }
+  .form-banner {
+    width: 100%;
+    height: 150px;
+    background: url('https://ukraine-gta.com.ua/images/storage/130ec63e-ede8-4d01-b043-ad10fe9d79aa.webp') no-repeat center;
+    background-size: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    filter: drop-shadow(5px 5px 10px #000000);
+  }
+  .form-container .block {
+    margin-bottom: 20px;
+    text-align: left;
+    padding: 10px;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+    border-radius: 5px;
+    background-color: rgba(50, 50, 60, 0.8);
+  }
+  .form-container label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  .form-container label i {
+    margin-right: 10px;
+    color: #007BFF;
+  }
+  .form-container input, .form-container select, .form-container button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+    box-sizing: border-box;
+  }
+  .form-container input, .form-container select {
+    background-color: rgba(21, 21, 29, 0.9);
+    color: white;
+  }
+  .form-container button {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+  }
+  .form-container button:hover {
+    background-color: #0056b3;
+  }
+  .form-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  .form-container .radio-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .form-container .radio-group label {
+    flex: 1;
+    text-align: center;
+    background-color: #0F0F16;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+  }
+  .form-container .radio-group input {
+    display: none;
+  }
+  .form-container .radio-group input:checked + label {
+    background-color: #007BFF;
+    color: white;
+  }
+  .button-cooldown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0, 123, 255, 0.5) 0%, rgba(0, 123, 255, 0.8) 50%, rgba(0, 123, 255, 0.5) 100%);
+    transform: translateX(-100%);
+    transition: transform 30s linear;
+  }
+  .button-text {
+    position: relative;
+    z-index: 1;
+  }
+  .notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 300px;
+    max-width: 100%;
+  }
+  .notification {
+    background-color: rgba(21, 21, 29, 0.9);
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.5s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+  .notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, #007BFF, #00a8ff);
+  }
+  .notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .notification-title {
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
+  .notification-title i {
+    margin-right: 8px;
+  }
+  .notification-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  .notification-close:hover {
+    opacity: 1;
+  }
+  .notification-content {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .notification-time {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    align-self: flex-end;
+    margin-top: 5px;
+  }
+  .notification.success::before {
+    background: linear-gradient(to right, #28a745, #5cb85c);
+  }
+  .notification.error::before {
+    background: linear-gradient(to right, #dc3545, #d9534f);
+  }
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
     }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @media (min-width: 768px) {
     .form-container {
-      width: 90%;
-      max-width: 500px;
-      background-color: rgba(21, 21, 29, 0.9);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-      color: #fff;
-      text-align: center;
-      position: relative;
-    }
-    .form-container h1 {
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
-    .form-container h2 {
-      font-size: 20px;
-    }
-    .form-banner {
-      width: 100%;
-      height: 150px;
-      background: url('https://i.imgur.com/qt6wcPg.jpeg') no-repeat center;
-      background-size: cover;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      filter: drop-shadow(5px 5px 10px #000000);
-    }
-    .form-container .block {
-      margin-bottom: 20px;
-      text-align: left;
-      padding: 10px;
-      border: 1px solid rgba(0, 123, 255, 0.2);
-      border-radius: 5px;
-      background-color: rgba(50, 50, 60, 0.8);
-    }
-    .form-container label {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-      font-size: 14px;
-    }
-    .form-container label i {
-      margin-right: 10px;
-      color: #007BFF;
-    }
-    .form-container input, .form-container select, .form-container button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      margin-top: 5px;
-      box-sizing: border-box;
-    }
-    .form-container input, .form-container select {
-      background-color: rgba(21, 21, 29, 0.9);
-      color: white;
-    }
-    .form-container button {
-      background-color: #007BFF;
-      color: white;
-      cursor: pointer;
-      margin-top: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-    .form-container button:hover {
-      background-color: #0056b3;
-    }
-    .form-container button:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-    }
-    .message {
-      font-size: 14px;
-      margin-top: 10px;
-      display: none;
-    }
-    .message.success {
-      color: #28a745;
-    }
-    .message.error {
-      color: #dc3545;
+      width: 500px;
+      padding: 30px;
     }
     .form-container .radio-group {
-      display: flex;
-      flex-direction: column;
+      flex-direction: row;
     }
     .form-container .radio-group label {
-      flex: 1;
-      text-align: center;
-      background-color: #0F0F16;
-      padding: 10px;
-      border-radius: 5px;
-      margin: 5px 0;
-      cursor: pointer;
+      margin: 0 5px;
     }
-    .form-container .radio-group input {
-      display: none;
-    }
-    .form-container .radio-group input:checked + label {
-      background-color: #007BFF;
-      color: white;
-    }
-    .button-cooldown {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 123, 255, 0.5);
-      transform: translateX(-100%);
-      transition: transform 30s linear;
-    }
-    .button-text {
-      position: relative;
-      z-index: 1;
-    }
-    @media (min-width: 768px) {
-      .form-container {
-        width: 500px;
-        padding: 30px;
-      }
-      .form-container .radio-group {
-        flex-direction: row;
-      }
-      .form-container .radio-group label {
-        margin: 0 5px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="form-container">
-    <div class="form-banner"></div>
-    <h1>Онлайн Зміна #02</h1>
-    <h2><span style="color: #9A9893;">* * *</span></h2>
-    <p>Тут Ви вказуєте початок зміни та її кінець. <br><br>При початку зміни - вказуєте лише час в пункті "Початок зміни", і з закінченням так само.</p>
-    <form id="shiftForm">
-      <div class="block">
-        <label for="nickname"><i class="fas fa-user"></i> Nick Name:</label>
-        <input type="text" id="nickname" name="nickname" placeholder="Введіть нікнейм" required>
+<div class="notifications-container" id="notificationsContainer"></div>
+<div class="form-container">
+  <div class="form-banner"></div>
+  <h1>Онлайн Зміна #02</h1>
+  <h2><span style="color: #9A9893;">* * *</span></h2>
+  <p>Тут Ви вказуєте початок зміни та її кінець. <br><br>При початку зміни - вказуєте лише час в пункті "Початок зміни", і з закінченням так само.</p>
+  <form id="shiftForm">
+    <div class="block">
+      <label for="nickname"><i class="fas fa-user"></i> Nick Name:</label>
+      <input type="text" id="nickname" name="nickname" placeholder="Введіть нікнейм" required>
+    </div>
+    <div class="block">
+      <label><i class="fas fa-check-circle"></i> Виберіть тип зміни:</label>
+      <div class="radio-group">
+        <input type="radio" id="startShift" name="shiftType" value="start" required>
+        <label for="startShift">Почав(ла) онлайн зміну</label>
+
+        <input type="radio" id="endShift" name="shiftType" value="end" required>
+        <label for="endShift">Закінчив(ла) онлайн зміну</label>
       </div>
-      <div class="block">
-        <label><i class="fas fa-check-circle"></i> Виберіть тип зміни:</label>
-        <div class="radio-group">
-          <input type="radio" id="startShift" name="shiftType" value="start" required>
-          <label for="startShift">Почав(ла) онлайн зміну</label>
+    </div>
+    <div class="block">
+      <label for="time"><i class="fas fa-clock"></i> Час:</label>
+      <input type="time" id="time" name="time" required>
+    </div>
+    <button type="submit" id="submitButton">
+      <span class="button-text">Надіслати</span>
+      <span class="button-cooldown"></span>
+    </button>
+  </form>
+</div>
 
-          <input type="radio" id="endShift" name="shiftType" value="end" required>
-          <label for="endShift">Закінчив(ла) онлайн зміну</label>
-        </div>
-      </div>
-      <div class="block">
-        <label for="time"><i class="fas fa-clock"></i> Час:</label>
-        <input type="time" id="time" name="time" required>
-      </div>
-      <button type="submit" id="submitButton">
-        <span class="button-text">Надіслати</span>
-        <span class="button-cooldown"></span>
-      </button>
-    </form>
-    <div id="message" class="message"></div>
-  </div>
+<script>
+  // Конфігурація Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWDZEbWZnQJj7c-QZmtqILnLrCUzVXZgk",
+    authDomain: "online-ukraine-gta.firebaseapp.com",
+    databaseURL: "https://online-ukraine-gta-default-rtdb.firebaseio.com",
+    projectId: "online-ukraine-gta",
+    storageBucket: "online-ukraine-gta.appspot.com",
+    messagingSenderId: "1068307395139",
+    appId: "1:1068307395139:web:a2d5d7f0d4e5d4b1d4b4b4"
+  };
 
-  <script>
-    // Конфігурація Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyDWDZEbWZnQJj7c-QZmtqILnLrCUzVXZgk",
-      authDomain: "online-ukraine-gta.firebaseapp.com",
-      databaseURL: "https://online-ukraine-gta-default-rtdb.firebaseio.com",
-      projectId: "online-ukraine-gta",
-      storageBucket: "online-ukraine-gta.appspot.com",
-      messagingSenderId: "1068307395139",
-      appId: "1:1068307395139:web:a2d5d7f0d4e5d4b1d4b4b4"
-    };
+  // Ініціалізація Firebase
+  firebase.initializeApp(firebaseConfig);
 
-    // Ініціалізація Firebase
-    firebase.initializeApp(firebaseConfig);
+  document.addEventListener('DOMContentLoaded', async (event) => {
+    const form = document.getElementById('shiftForm');
+    const submitButton = document.getElementById('submitButton');
+    const cooldownElement = submitButton.querySelector('.button-cooldown');
+    let cooldownTimer;
 
-    document.addEventListener('DOMContentLoaded', async (event) => {
-      const form = document.getElementById('shiftForm');
-      const messageDiv = document.getElementById('message');
-      const submitButton = document.getElementById('submitButton');
-      const cooldownElement = submitButton.querySelector('.button-cooldown');
-      let cooldownTimer;
+    // Функція для відображення повідомлень
+    function showNotification(title, message, isError = false) {
+      const notificationsContainer = document.getElementById('notificationsContainer');
+      const notification = document.createElement('div');
+      notification.className = `notification ${isError ? 'error' : 'success'}`;
+      
+      const notificationHeader = document.createElement('div');
+      notificationHeader.className = 'notification-header';
+      
+      const notificationTitle = document.createElement('div');
+      notificationTitle.className = 'notification-title';
+      notificationTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${title}`;
+      
+      const closeButton = document.createElement('button');
+      closeButton.className = 'notification-close';
+      closeButton.innerHTML = '&times;';
+      closeButton.onclick = () => notification.remove();
+      
+      notificationHeader.appendChild(notificationTitle);
+      notificationHeader.appendChild(closeButton);
+      
+      const content = document.createElement('div');
+      content.className = 'notification-content';
+      content.textContent = message;
+      
+      const time = document.createElement('div');
+      time.className = 'notification-time';
+      time.textContent = new Date().toLocaleTimeString();
+      
+      notification.appendChild(notificationHeader);
+      notification.appendChild(content);
+      notification.appendChild(time);
+      
+      notificationsContainer.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 8000);
+    }
 
-      // Функція для відображення повідомлень
-      function showMessage(message, isError = false) {
-        messageDiv.textContent = message;
-        messageDiv.className = isError ? 'message error' : 'message success';
-        messageDiv.style.display = 'block';
-        setTimeout(() => {
-          messageDiv.style.display = 'none';
-        }, 8000);
-      }
-
-      // Функція для запуску анімації перезарядки
-      function startCooldown() {
-        submitButton.disabled = true;
-        cooldownElement.style.transform = 'translateX(0)';
-        cooldownTimer = setTimeout(() => {
-          submitButton.disabled = false;
-          cooldownElement.style.transform = 'translateX(-100%)';
-        }, 30000);
-      }
-
-      // Функція для скидання анімації перезарядки
-      function resetCooldown() {
-        clearTimeout(cooldownTimer);
+    // Функція для запуску анімації перезарядки
+    function startCooldown() {
+      submitButton.disabled = true;
+      cooldownElement.style.transform = 'translateX(0)';
+      cooldownTimer = setTimeout(() => {
         submitButton.disabled = false;
         cooldownElement.style.transform = 'translateX(-100%)';
+      }, 30000);
+    }
+
+    // Функція для скидання анімації перезарядки
+    function resetCooldown() {
+      clearTimeout(cooldownTimer);
+      submitButton.disabled = false;
+      cooldownElement.style.transform = 'translateX(-100%)';
+    }
+
+    // Отримання конфігурації з Firebase
+    try {
+      const dbRef = firebase.database().ref('config02');
+      const snapshot = await dbRef.once('value');
+      const CONFIG = snapshot.val();
+      
+      if (!CONFIG || !CONFIG.GOOGLE_SHEET_URL || !CONFIG.DISCORD_WEBHOOK_URL) {
+        throw new Error('Не вдалося отримати конфігурацію з Firebase');
       }
 
-      // Отримання конфігурації з Firebase
-      try {
-        const dbRef = firebase.database().ref('config02');
-        const snapshot = await dbRef.once('value');
-        const CONFIG = snapshot.val();
-        
-        if (!CONFIG || !CONFIG.GOOGLE_SHEET_URL || !CONFIG.DISCORD_WEBHOOK_URL) {
-          throw new Error('Не вдалося отримати конфігурацію з Firebase');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (submitButton.disabled) {
+          return;
         }
 
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
+        const formData = new FormData(form);
+        const nickname = formData.get('nickname');
+        const shiftType = formData.get('shiftType');
+        const time = formData.get('time');
 
-          if (submitButton.disabled) {
-            return;
-          }
+        if (!nickname || !shiftType || !time) {
+          showNotification('Помилка', 'Будь ласка, заповніть усі поля!', true);
+          return;
+        }
 
-          const formData = new FormData(form);
-          const nickname = formData.get('nickname');
-          const startShift = formData.get('shiftType') === 'start';
-          const endShift = formData.get('shiftType') === 'end';
-          const time = formData.get('time');
+        startCooldown();
 
-          if (!nickname || (!startShift && !endShift) || !time) {
-            showMessage('Будь ласка, заповніть усі поля!', true);
-            return;
-          }
+        const shiftTypeText = shiftType === 'start' ? 'почав(ла) онлайн зміну' : 'закінчив(ла) онлайн зміну';
 
-          startCooldown();
-
-          const shiftType = startShift ? 'почав(ла) онлайн зміну' : 'закінчив(ла) онлайн зміну';
-
-          try {
-            console.log('Відправка даних на Google Sheets...');
-            const googleSheetResponse = await fetch(CONFIG.GOOGLE_SHEET_URL, {
-              method: 'POST',
-              body: new URLSearchParams({
-                nickname,
-                shiftType,
-                time
-              }),
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              }
-            });
-
-            if (!googleSheetResponse.ok) {
-              console.error('Помилка відповіді Google Sheets:', await googleSheetResponse.text());
-              throw new Error('Не вдалося надіслати дані в Google Sheets');
+        try {
+          showNotification('Обробка', 'Відправка даних на Google Sheets...');
+          const googleSheetResponse = await fetch(CONFIG.GOOGLE_SHEET_URL, {
+            method: 'POST',
+            body: new URLSearchParams({
+              nickname,
+              shiftType: shiftTypeText,
+              time
+            }),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
             }
+          });
 
-            console.log('Дані успішно відправлені на Google Sheets');
+          if (!googleSheetResponse.ok) {
+            throw new Error('Не вдалося надіслати дані в Google Sheets');
+          }
 
-            console.log('Відправка даних на Discord...');
-            const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                username: 'UKRAINE GTA #02',
-                avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
-                embeds: [{
-                  color: startShift ? 0x00ff00 : 0xff0000,
-                  title: startShift ? '🟢 Початок онлайн зміни' : '🔴 Кінець онлайн зміни',
-                  description: `**${nickname}** ${shiftType}`,
-                  fields: [
-                    {
-                      name: '⏰ Час',
-                      value: time,
-                      inline: true
-                    },
-                    {
-                      name: '📅 Дата',
-                      value: new Date().toLocaleDateString('uk-UA', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      }),
-                      inline: true
-                    }
-                  ],
-                  footer: {
-                    text: 'UKRAINE GTA #02 - Система обліку онлайн змін'
+          showNotification('Успіх', 'Дані успішно відправлені на Google Sheets');
+
+          showNotification('Обробка', 'Відправка даних на Discord...');
+          const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username: 'UKRAINE GTA #02',
+              avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
+              embeds: [{
+                color: shiftType === 'start' ? 0x00ff00 : 0xff0000,
+                title: shiftType === 'start' ? '🟢 Початок онлайн зміни' : '🔴 Кінець онлайн зміни',
+                description: `**${nickname}** ${shiftTypeText}`,
+                fields: [
+                  {
+                    name: '⏰ Час',
+                    value: time,
+                    inline: true
                   },
-                  timestamp: new Date().toISOString()
-                }]
-              }),
-            });
+                  {
+                    name: '📅 Дата',
+                    value: new Date().toLocaleDateString('uk-UA', {
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    }),
+                    inline: true
+                  }
+                ],
+                footer: {
+                  text: 'UKRAINE GTA #02 - Система обліку онлайн змін'
+                },
+                timestamp: new Date().toISOString()
+              }]
+            }),
+          });
 
-            if (!discordResponse.ok) {
-              console.error('Помилка відповіді Discord:', await discordResponse.text());
-              throw new Error('Не вдалося надіслати повідомлення в Discord');
-            }
-
-            console.log('Дані успішно відправлені на Discord');
-
-            showMessage('Дані успішно надіслані! З повагою @daniil_staff');
-            form.reset();
-
-          } catch (error) {
-            console.error('Помилка при відправленні:', error);
-            showMessage(`Помилка при відправленні: ${error.message}`, true);
-            resetCooldown();
+          if (!discordResponse.ok) {
+            throw new Error('Не вдалося надіслати повідомлення в Discord');
           }
-        });
 
-      } catch (error) {
-        console.error('Помилка ініціалізації:', error);
-        showMessage('Помилка отримання даних Firebase. Будь ласка, зв"яжіться із розробником @daniil_staff.', true);
-      }
-    });
-  </script>
+          showNotification('Успіх', 'Дані успішно відправлені на Discord');
+          showNotification('Успіх', 'Дані успішно надіслані! З повагою @daniil_staff');
+          form.reset();
+
+        } catch (error) {
+          showNotification('Помилка', `Помилка при відправленні: ${error.message}`, true);
+          resetCooldown();
+        }
+      });
+
+    } catch (error) {
+      showNotification('Помилка', 'Помилка отримання даних Firebase. Будь ласка, зв\'яжіться із розробником @daniil_staff.', true);
+    }
+  });
+</script>
 </body>
 </html>
-
