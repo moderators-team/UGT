@@ -39,6 +39,21 @@
     text-align: center;
     position: relative;
     transition: all 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #007BFF rgba(50, 50, 60, 0.5);
+  }
+  .container::-webkit-scrollbar {
+    width: 8px;
+  }
+  .container::-webkit-scrollbar-track {
+    background: rgba(50, 50, 60, 0.5);
+    border-radius: 10px;
+  }
+  .container::-webkit-scrollbar-thumb {
+    background-color: #007BFF;
+    border-radius: 10px;
   }
   .container h1 {
     margin-bottom: 20px;
@@ -343,6 +358,21 @@
   .shift-history {
     max-height: 300px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #007BFF rgba(50, 50, 60, 0.5);
+    padding-right: 5px;
+    scroll-behavior: smooth;
+  }
+  .shift-history::-webkit-scrollbar {
+    width: 6px;
+  }
+  .shift-history::-webkit-scrollbar-track {
+    background: rgba(50, 50, 60, 0.5);
+    border-radius: 10px;
+  }
+  .shift-history::-webkit-scrollbar-thumb {
+    background-color: #007BFF;
+    border-radius: 10px;
   }
   .shift-item {
     background-color: rgba(50, 50, 60, 0.8);
@@ -352,6 +382,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.2s ease;
+  }
+  .shift-item:hover {
+    background-color: rgba(60, 60, 70, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   }
   .shift-date {
     font-size: 12px;
@@ -392,6 +428,26 @@
     align-items: center;
     font-size: 30px;
     color: white;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-picture:hover::after {
+    content: '\f030';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
   }
   .welcome-message {
     font-size: 22px;
@@ -492,6 +548,58 @@
   .status-indicator i {
     margin-right: 8px;
   }
+  /* Стилі для завантаження фото профілю */
+  .photo-upload-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .photo-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    background-color: #2a2a3a;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #007BFF;
+  }
+  .photo-upload-btn {
+    background-color: rgba(0, 123, 255, 0.2);
+    border: 1px dashed #007BFF;
+    color: #007BFF;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+  }
+  .photo-upload-btn:hover {
+    background-color: rgba(0, 123, 255, 0.3);
+  }
+  .photo-upload-btn i {
+    margin-right: 8px;
+  }
+  .file-input {
+    display: none;
+  }
+  .upload-progress {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background-color: #007BFF;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
   @media (min-width: 768px) {
     .container {
       width: 500px;
@@ -514,7 +622,7 @@
   
   <!-- Форма авторизації -->
   <div id="loginForm" class="visible">
-    <h1>Онлайн Зміна ЧУПАЧУПСА🍭</h1>
+    <h1>Онлайн Зміна #04</h1>
     <h2><span style="color: #9A9893;">* * *</span></h2>
     <p>Увійдіть у систему або створіть новий обліковий запис</p>
     
@@ -728,6 +836,17 @@
     <p>Змініть ваші особисті дані</p>
     
     <form id="profileForm">
+      <div class="photo-upload-container">
+        <div class="photo-preview" id="photoPreview"></div>
+        <label for="photoUpload" class="photo-upload-btn">
+          <i class="fas fa-camera"></i> Завантажити фото профілю
+        </label>
+        <input type="file" id="photoUpload" class="file-input" accept="image/*">
+        <div class="upload-progress" id="uploadProgress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+      
       <div class="block">
         <label for="profileEmail"><i class="fas fa-envelope"></i> Електронна пошта:</label>
         <input type="email" id="profileEmail" name="email" placeholder="Електронна пошта" disabled>
@@ -801,6 +920,9 @@
     showNotification('Помилка', 'Не вдалося підключитися до сервера. Перевірте з\'єднання з інтернетом.', 'error');
   }
 
+  // Imgur API клієнт ID
+  const IMGUR_CLIENT_ID = 'cc7bda6e0fd7c98';
+
   // Кешування DOM-елементів для оптимізації
   const elements = {
     notificationsContainer: document.getElementById('notificationsContainer'),
@@ -818,7 +940,12 @@
     startShiftTime: document.getElementById('startShiftTime'),
     endShiftTime: document.getElementById('endShiftTime'),
     forgotPasswordStatus: document.getElementById('forgotPasswordStatus'),
-    resetPasswordEmail: document.getElementById('resetPasswordEmail')
+    resetPasswordEmail: document.getElementById('resetPasswordEmail'),
+    photoUpload: document.getElementById('photoUpload'),
+    photoPreview: document.getElementById('photoPreview'),
+    progressBar: document.getElementById('progressBar'),
+    uploadProgress: document.getElementById('uploadProgress'),
+    endActiveShiftButton: document.getElementById('endActiveShiftButton')
   };
 
   // Функція для відображення повідомлень
@@ -1019,9 +1146,11 @@
         elements.activeShiftTime.textContent = activeShift.startTime;
         elements.displayStartTime.textContent = activeShift.startTime;
         elements.activeShiftIndicator.classList.remove('hidden');
+        elements.endActiveShiftButton.style.display = 'flex';
         return activeShift;
       } else {
         elements.activeShiftIndicator.classList.add('hidden');
+        elements.endActiveShiftButton.style.display = 'none';
         return null;
       }
     } catch (error) {
@@ -1171,6 +1300,75 @@
     }
   }
 
+  // Функція для завантаження зображення на Imgur
+  async function uploadImageToImgur(file) {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      elements.progressBar.style.width = '0%';
+      elements.uploadProgress.style.display = 'block';
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.imgur.com/3/image');
+      xhr.setRequestHeader('Authorization', `Client-ID ${IMGUR_CLIENT_ID}`);
+      
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const progress = (e.loaded / e.total) * 100;
+          elements.progressBar.style.width = `${progress}%`;
+        }
+      };
+      
+      return new Promise((resolve, reject) => {
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+              resolve(response.data.link);
+            } else {
+              reject(new Error('Помилка завантаження зображення на Imgur'));
+            }
+          } else {
+            reject(new Error(`Помилка HTTP: ${xhr.status}`));
+          }
+        };
+        
+        xhr.onerror = () => {
+          reject(new Error('Помилка мережі при завантаженні зображення'));
+        };
+        
+        xhr.send(formData);
+      });
+    } catch (error) {
+      console.error('Помилка завантаження зображення:', error);
+      throw error;
+    } finally {
+      setTimeout(() => {
+        elements.uploadProgress.style.display = 'none';
+      }, 1000);
+    }
+  }
+
+  // Функція для оновлення фото профілю
+  async function updateProfilePhoto(userId, photoURL) {
+    try {
+      await database.ref(`users/${userId}`).update({
+        photoURL
+      });
+      
+      // Оновлюємо відображення фото профілю
+      elements.profilePicture.style.backgroundImage = `url(${photoURL})`;
+      elements.profilePicture.textContent = '';
+      elements.photoPreview.style.backgroundImage = `url(${photoURL})`;
+      
+      return true;
+    } catch (error) {
+      console.error('Помилка оновлення фото профілю:', error);
+      throw error;
+    }
+  }
+
   // Обробники подій для вкладок
   document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
@@ -1237,7 +1435,17 @@
       
       // Оновлюємо інтерфейс
       elements.userNameDisplay.textContent = nickname;
-      elements.profilePicture.textContent = nickname.charAt(0).toUpperCase();
+      
+      // Встановлюємо фото профілю або ініціали
+      if (userData.photoURL) {
+        elements.profilePicture.style.backgroundImage = `url(${userData.photoURL})`;
+        elements.profilePicture.textContent = '';
+        elements.photoPreview.style.backgroundImage = `url(${userData.photoURL})`;
+      } else {
+        elements.profilePicture.style.backgroundImage = '';
+        elements.profilePicture.textContent = nickname.charAt(0).toUpperCase();
+        elements.photoPreview.style.backgroundImage = '';
+      }
       
       // Заповнюємо форму профілю
       elements.profileEmail.value = email;
@@ -1437,10 +1645,22 @@
   });
 
   // Обробники для карток дій
-  document.getElementById('startShiftCard').addEventListener('click', () => {
-    // Заповнюємо поле часу поточним значенням
-    elements.startShiftTime.value = getCurrentTime();
-    showScreen('startShiftScreen');
+  document.getElementById('startShiftCard').addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (user) {
+      // Перевіряємо, чи немає вже активної зміни
+      const activeShift = await checkActiveShift(user.uid);
+      if (activeShift) {
+        showNotification('Увага', 'У вас вже є активна зміна', 'warning');
+        return;
+      }
+      
+      // Заповнюємо поле часу поточним значенням
+      elements.startShiftTime.value = getCurrentTime();
+      showScreen('startShiftScreen');
+    } else {
+      showNotification('Помилка', 'Ви не авторизовані', 'error');
+    }
   });
   
   document.getElementById('viewHistoryCard').addEventListener('click', async () => {
@@ -1448,11 +1668,18 @@
     if (user) {
       showScreen('historyScreen');
       await loadShiftHistory(user.uid);
+    } else {
+      showNotification('Помилка', 'Ви не авторизовані', 'error');
     }
   });
   
   document.getElementById('profileSettingsCard').addEventListener('click', () => {
-    showScreen('profileScreen');
+    const user = auth.currentUser;
+    if (user) {
+      showScreen('profileScreen');
+    } else {
+      showNotification('Помилка', 'Ви не авторизовані', 'error');
+    }
   });
 
   // Обробник для кнопки закінчення активної зміни
@@ -1463,7 +1690,11 @@
       if (activeShift) {
         elements.endShiftTime.value = getCurrentTime();
         showScreen('endShiftScreen');
+      } else {
+        showNotification('Помилка', 'У вас немає активної зміни', 'error');
       }
+    } else {
+      showNotification('Помилка', 'Ви не авторизовані', 'error');
     }
   });
 
@@ -1480,7 +1711,7 @@
     const startTime = elements.startShiftTime.value;
     
     if (!startTime) {
-      showNotification('Помилка',   'Вкажіть час початку зміни', 'error');
+      showNotification('Помилка', 'Вкажіть час початку зміни', 'error');
       return;
     }
     
@@ -1686,6 +1917,59 @@
     }
   });
 
+  // Обробник для завантаження фото профілю
+  elements.photoUpload.addEventListener('change', async (e) => {
+    const user = auth.currentUser;
+    if (!user) {
+      showNotification('Помилка', 'Ви не авторизовані', 'error');
+      return;
+    }
+
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Перевіряємо тип файлу
+    if (!file.type.startsWith('image/')) {
+      showNotification('Помилка', 'Будь ласка, виберіть зображення', 'error');
+      return;
+    }
+
+    // Перевіряємо розмір файлу (не більше 5 МБ)
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification('Помилка', 'Розмір файлу не повинен перевищувати 5 МБ', 'error');
+      return;
+    }
+
+    try {
+      // Показуємо попередній перегляд
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        elements.photoPreview.style.backgroundImage = `url(${event.target.result})`;
+      };
+      reader.readAsDataURL(file);
+      
+      // Завантажуємо зображення на Imgur
+      showNotification('Інформація', 'Завантаження фото...', 'info');
+      const imageUrl = await uploadImageToImgur(file);
+      
+      // Оновлюємо фото профілю в базі даних
+      await updateProfilePhoto(user.uid, imageUrl);
+      
+      showNotification('Успіх', 'Фото профілю успішно оновлено', 'success');
+    } catch (error) {
+      console.error('Помилка завантаження фото:', error);
+      showNotification('Помилка', 'Не вдалося завантажити фото: ' + (error.message || 'Невідома помилка'), 'error');
+    }
+  });
+
+  // Обробник для кліку на фото профілю на головному екрані
+  elements.profilePicture.addEventListener('click', () => {
+    const user = auth.currentUser;
+    if (user) {
+      showScreen('profileScreen');
+    }
+  });
+
   // Обробник для форми профілю
   document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1728,7 +2012,11 @@
       
       // Оновлюємо інтерфейс
       elements.userNameDisplay.textContent = nickname;
-      elements.profilePicture.textContent = nickname.charAt(0).toUpperCase();
+      
+      // Якщо немає фото, показуємо ініціали
+      if (!elements.profilePicture.style.backgroundImage) {
+        elements.profilePicture.textContent = nickname.charAt(0).toUpperCase();
+      }
       
       // Затримка перед переходом на головний екран
       setTimeout(() => {
@@ -1770,6 +2058,9 @@
     elements.startShiftTime.value = currentTime;
     elements.endShiftTime.value = currentTime;
     
+    // Приховуємо індикатор прогресу завантаження
+    elements.uploadProgress.style.display = 'none';
+    
     // Перевіряємо стан авторизації
     auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -1779,7 +2070,17 @@
           
           // Оновлюємо інтерфейс
           elements.userNameDisplay.textContent = userData.nickname || 'Користувач';
-          elements.profilePicture.textContent = (userData.nickname || 'К').charAt(0).toUpperCase();
+          
+          // Встановлюємо фото профілю або ініціали
+          if (userData.photoURL) {
+            elements.profilePicture.style.backgroundImage = `url(${userData.photoURL})`;
+            elements.profilePicture.textContent = '';
+            elements.photoPreview.style.backgroundImage = `url(${userData.photoURL})`;
+          } else {
+            elements.profilePicture.style.backgroundImage = '';
+            elements.profilePicture.textContent = (userData.nickname || 'К').charAt(0).toUpperCase();
+            elements.photoPreview.style.backgroundImage = '';
+          }
           
           // Заповнюємо форму профілю
           elements.profileEmail.value = userData.email || user.email;
@@ -1805,3 +2106,4 @@
 </script>
 </body>
 </html>
+
