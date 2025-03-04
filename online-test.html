@@ -1256,7 +1256,7 @@ try {
 async function sendToGoogleSheets(data) {
 try {
   // Отримуємо URL з Firebase
-  const configRef = database.ref('config04');
+  const configRef = database.ref('config-test');
   const snapshot = await configRef.once('value');
   const CONFIG = snapshot.val();
   
