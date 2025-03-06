@@ -8,444 +8,2142 @@
 <link rel="icon" href="https://i.imgur.com/lSeLN06.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-  body {
-    font-family: 'Comfortaa', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: #000000 url('https://i.imgur.com/JNKW51n.png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
-  .form-container {
-    width: 90%;
-    max-width: 500px;
-    background-color: rgba(21, 21, 29, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-    color: #fff;
-    text-align: center;
-    position: relative;
-  }
-  .form-container h1 {
-    margin-bottom: 20px;
-    font-size: 24px;
-  }
-  .form-container h2 {
-    font-size: 20px;
-  }
-  .form-banner {
-    width: 100%;
-    height: 150px;
-    background: url('https://i.imgur.com/qt6wcPg.jpeg') no-repeat center;
-    background-size: cover;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    filter: drop-shadow(5px 5px 10px #000000);
-  }
-  .form-container .block {
-    margin-bottom: 20px;
-    text-align: left;
-    padding: 10px;
-    border: 1px solid rgba(0, 123, 255, 0.2);
-    border-radius: 5px;
-    background-color: rgba(50, 50, 60, 0.8);
-  }
-  .form-container label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  .form-container label i {
-    margin-right: 10px;
-    color: #007BFF;
-  }
-  .form-container input, .form-container select, .form-container button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 5px;
-    box-sizing: border-box;
-  }
-  .form-container input, .form-container select {
-    background-color: rgba(21, 21, 29, 0.9);
-    color: white;
-  }
-  .form-container button {
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    margin-top: 10px;
-    position: relative;
-    overflow: hidden;
-    transition: background-color 0.3s ease;
-  }
-  .form-container button:hover {
-    background-color: #0056b3;
-  }
-  .form-container button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  .form-container .radio-group {
-    display: flex;
-    flex-direction: column;
-  }
-  .form-container .radio-group label {
-    flex: 1;
-    text-align: center;
-    background-color: #0F0F16;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 5px 0;
-    cursor: pointer;
-  }
-  .form-container .radio-group input {
-    display: none;
-  }
-  .form-container .radio-group input:checked + label {
-    background-color: #007BFF;
-    color: white;
-  }
-  .button-cooldown {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(0, 123, 255, 0.5) 0%, rgba(0, 123, 255, 0.8) 50%, rgba(0, 123, 255, 0.5) 100%);
-    transform: translateX(-100%);
-    transition: transform 30s linear;
-  }
-  .button-text {
-    position: relative;
-    z-index: 1;
-  }
-  .notifications-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    width: 300px;
-    max-width: 100%;
-  }
-  .notification {
-    background-color: rgba(21, 21, 29, 0.9);
-    color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    animation: slideIn 0.5s ease-out;
-    position: relative;
-    overflow: hidden;
-  }
-  .notification::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(to right, #007BFF, #00a8ff);
-  }
-  .notification-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .notification-title {
-    font-weight: bold;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-  }
-  .notification-title i {
-    margin-right: 8px;
-  }
-  .notification-close {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-  }
-  .notification-close:hover {
-    opacity: 1;
-  }
-  .notification-content {
-    font-size: 14px;
-    line-height: 1.4;
-  }
-  .notification-time {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    align-self: flex-end;
-    margin-top: 5px;
-  }
-  .notification.success::before {
-    background: linear-gradient(to right, #28a745, #5cb85c);
-  }
-  .notification.error::before {
-    background: linear-gradient(to right, #dc3545, #d9534f);
-  }
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  @media (min-width: 768px) {
-    .form-container {
-      width: 500px;
-      padding: 30px;
-    }
-    .form-container .radio-group {
-      flex-direction: row;
-    }
-    .form-container .radio-group label {
-      margin: 0 5px;
-    }
-  }
+body {
+font-family: 'Comfortaa', sans-serif;
+margin: 0;
+padding: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+background: #000000 url('https://ukraine-gta.com.ua/images/pages/main/decor.webp');
+background-size: cover;
+background-position: center center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+transition: all 0.3s ease;
+}
+.container {
+width: 90%;
+max-width: 500px;
+background-color: rgba(21, 21, 29, 0.9);
+padding: 20px;
+border-radius: 10px;
+box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+color: #fff;
+text-align: center;
+position: relative;
+transition: all 0.3s ease;
+}
+.container h1 {
+margin-bottom: 20px;
+font-size: 24px;
+}
+.container h2 {
+font-size: 20px;
+}
+.banner {
+width: 100%;
+height: 150px;
+background: url('https://ukraine-gta.com.ua/images/pages/main/cars-big.webp') no-repeat center;
+background-size: cover;
+border-radius: 10px;
+margin-bottom: 20px;
+filter: drop-shadow(5px 5px 10px #000000);
+}
+.block {
+margin-bottom: 20px;
+text-align: left;
+padding: 15px;
+border: 1px solid rgba(0, 123, 255, 0.2);
+border-radius: 5px;
+background-color: rgba(50, 50, 60, 0.8);
+transition: all 0.3s ease;
+}
+.block:hover {
+border-color: rgba(0, 123, 255, 0.5);
+box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+}
+label {
+display: flex;
+align-items: center;
+margin-bottom: 8px;
+font-size: 14px;
+}
+label i {
+margin-right: 10px;
+color: #007BFF;
+}
+input, select, button {
+width: 100%;
+padding: 12px;
+border: none;
+border-radius: 5px;
+font-size: 16px;
+margin-top: 5px;
+box-sizing: border-box;
+font-family: 'Comfortaa', sans-serif;
+resize: none;
+}
+input, select {
+background-color: rgba(21, 21, 29, 0.9);
+color: white;
+transition: all 0.3s ease;
+}
+input:focus, select:focus {
+outline: none;
+box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+button {
+background-color: #007BFF;
+color: white;
+cursor: pointer;
+margin-top: 10px;
+position: relative;
+overflow: hidden;
+transition: background-color 0.3s ease;
+font-weight: bold;
+}
+button:hover {
+background-color: #0056b3;
+}
+button:disabled {
+background-color: #cccccc;
+cursor: not-allowed;
+}
+.radio-group {
+display: flex;
+flex-direction: column;
+}
+.radio-group label {
+flex: 1;
+text-align: center;
+background-color: #0F0F16;
+padding: 12px;
+border-radius: 5px;
+margin: 5px 0;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+.radio-group label:hover {
+background-color: #1a1a24;
+}
+.radio-group input {
+display: none;
+}
+.radio-group input:checked + label {
+background-color: #007BFF;
+color: white;
+}
+.button-cooldown {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, rgba(0, 123, 255, 0.5) 0%, rgba(0, 123, 255, 0.8) 50%, rgba(0, 123, 255, 0.5) 100%);
+transform: translateX(-100%);
+transition: transform 30s linear;
+}
+.button-text {
+position: relative;
+z-index: 1;
+}
+.notifications-container {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1000;
+width: 300px;
+max-width: 100%;
+}
+.notification {
+background-color: rgba(21, 21, 29, 0.9);
+color: #fff;
+padding: 15px;
+border-radius: 10px;
+margin-bottom: 10px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+display: flex;
+flex-direction: column;
+animation: slideIn 0.5s ease-out;
+position: relative;
+overflow: hidden;
+}
+.notification::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 5px;
+background: linear-gradient(to right, #007BFF, #00a8ff);
+}
+.notification-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
+.notification-title {
+font-weight: bold;
+font-size: 16px;
+display: flex;
+align-items: center;
+}
+.notification-title i {
+margin-right: 8px;
+}
+.notification-close {
+background: none;
+border: none;
+color: #fff;
+font-size: 20px;
+cursor: pointer;
+padding: 0;
+opacity: 0.7;
+transition: opacity 0.3s ease;
+}
+.notification-close:hover {
+opacity: 1;
+}
+.notification-content {
+font-size: 14px;
+line-height: 1.4;
+}
+.notification-time {
+font-size: 12px;
+color: rgba(255, 255, 255, 0.7);
+align-self: flex-end;
+margin-top: 5px;
+}
+.notification.success::before {
+background: linear-gradient(to right, #28a745, #5cb85c);
+}
+.notification.error::before {
+background: linear-gradient(to right, #dc3545, #d9534f);
+}
+.notification.warning::before {
+background: linear-gradient(to right, #ffc107, #ffdb58);
+}
+.notification.info::before {
+background: linear-gradient(to right, #17a2b8, #5bc0de);
+}
+@keyframes slideIn {
+from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+to {
+  transform: translateX(0);
+  opacity: 1;
+}
+}
+@keyframes fadeIn {
+from {
+  opacity: 0;
+}
+to {
+  opacity: 1;
+}
+}
+.hidden {
+display: none;
+}
+.visible {
+display: block;
+animation: fadeIn 0.5s ease-out;
+}
+.action-card {
+background-color: rgba(50, 50, 60, 0.8);
+border-radius: 10px;
+padding: 20px;
+margin: 10px 0;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease;
+border: 1px solid rgba(0, 123, 255, 0.2);
+}
+.action-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+border-color: rgba(0, 123, 255, 0.5);
+}
+.action-card i {
+font-size: 30px;
+margin-bottom: 10px;
+color: #007BFF;
+}
+.action-card h3 {
+margin: 10px 0;
+}
+.action-card p {
+font-size: 14px;
+color: rgba(255, 255, 255, 0.7);
+}
+.stats-container {
+display: flex;
+justify-content: space-between;
+margin-bottom: 20px;
+}
+.stat-box {
+flex: 1;
+background-color: rgba(50, 50, 60, 0.8);
+border-radius: 10px;
+padding: 15px;
+margin: 0 5px;
+text-align: center;
+}
+.stat-box h4 {
+margin: 0 0 5px 0;
+font-size: 14px;
+color: rgba(255, 255, 255, 0.7);
+}
+.stat-box p {
+margin: 0;
+font-size: 18px;
+font-weight: bold;
+}
+.tab-container {
+margin-bottom: 20px;
+}
+.tab-buttons {
+display: flex;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.tab-button {
+flex: 1;
+background: none;
+border: none;
+padding: 10px;
+color: rgba(255, 255, 255, 0.7);
+cursor: pointer;
+margin: 0;
+transition: all 0.3s ease;
+}
+.tab-button.active {
+color: #fff;
+border-bottom: 2px solid #007BFF;
+}
+.tab-content {
+padding: 15px 0;
+}
+.tab-pane {
+display: none;
+}
+.tab-pane.active {
+display: block;
+animation: fadeIn 0.5s ease-out;
+}
+.shift-history {
+max-height: 300px;
+overflow-y: auto;
+scrollbar-width: thin;
+scrollbar-color: #007BFF rgba(50, 50, 60, 0.5);
+padding-right: 5px;
+scroll-behavior: smooth;
+}
+.shift-history::-webkit-scrollbar {
+width: 4px;
+}
+.shift-history::-webkit-scrollbar-track {
+background: rgba(50, 50, 60, 0.3);
+border-radius: 10px;
+}
+.shift-history::-webkit-scrollbar-thumb {
+background-color: #007BFF;
+border-radius: 10px;
+}
+.shift-item {
+background-color: rgba(50, 50, 60, 0.8);
+border-radius: 5px;
+padding: 10px;
+margin-bottom: 10px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+transition: all 0.2s ease;
+}
+.shift-item:hover {
+background-color: rgba(60, 60, 70, 0.9);
+transform: translateY(-2px);
+box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.shift-date {
+font-size: 12px;
+color: rgba(255, 255, 255, 0.7);
+}
+.shift-time {
+font-weight: bold;
+}
+.shift-duration {
+background-color: #007BFF;
+padding: 5px 10px;
+border-radius: 20px;
+font-size: 12px;
+}
+.back-button {
+background: none;
+border: none;
+color: #007BFF;
+cursor: pointer;
+display: flex;
+align-items: center;
+padding: 0;
+margin-bottom: 15px;
+font-size: 14px;
+width: auto;
+}
+.back-button i {
+margin-right: 5px;
+}
+.profile-picture {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+background-color: #007BFF;
+margin: 0 auto 15px;
+display: flex;
+justify-content: center;
+align-items: center;
+font-size: 30px;
+color: white;
+background-size: cover;
+background-position: center;
+cursor: pointer;
+position: relative;
+overflow: hidden;
+}
+.profile-picture:hover::after {
+content: '\f030';
+font-family: 'Font Awesome 5 Free';
+font-weight: 900;
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+display: flex;
+justify-content: center;
+align-items: center;
+font-size: 24px;
+}
+.welcome-message {
+font-size: 22px;
+margin-bottom: 20px;
+animation: fadeIn 0.5s ease-out;
+}
+.welcome-message span {
+color: #007BFF;
+font-weight: bold;
+}
+.active-shift-indicator {
+background-color: rgba(40, 167, 69, 0.2);
+border: 1px solid rgba(40, 167, 69, 0.5);
+color: #28a745;
+padding: 10px;
+border-radius: 5px;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.active-shift-indicator i {
+margin-right: 10px;
+}
+.active-shift-time {
+font-weight: bold;
+}
+.loader {
+display: inline-block;
+width: 20px;
+height: 20px;
+border: 3px solid rgba(255, 255, 255, 0.3);
+border-radius: 50%;
+border-top-color: #fff;
+animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+.remember-me {
+display: flex;
+align-items: center;
+margin-top: 10px;
+}
+.remember-me input {
+width: auto;
+margin-right: 10px;
+}
+.remember-me label {
+margin-bottom: 0;
+}
+.forgot-password {
+text-align: right;
+margin-top: 10px;
+}
+.forgot-password a {
+color: #007BFF;
+text-decoration: none;
+font-size: 14px;
+}
+.forgot-password a:hover {
+text-decoration: underline;
+}
+.divider {
+display: flex;
+align-items: center;
+margin: 20px 0;
+}
+.divider::before, .divider::after {
+content: '';
+flex: 1;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.divider span {
+padding: 0 10px;
+color: rgba(255, 255, 255, 0.5);
+font-size: 14px;
+}
+.photo-upload-container {
+margin-top: 20px;
+margin-bottom: 20px;
+}
+.photo-preview {
+width: 120px;
+height: 120px;
+border-radius: 50%;
+margin: 0 auto 15px;
+background-color: #2a2a3a;
+background-size: cover;
+background-position: center;
+position: relative;
+overflow: hidden;
+border: 3px solid #007BFF;
+}
+.photo-upload-btn {
+background-color: rgba(0, 123, 255, 0.2);
+border: 1px dashed #007BFF;
+color: #007BFF;
+padding: 10px;
+border-radius: 5px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-top: 10px;
+transition: all 0.3s ease;
+}
+.photo-upload-btn:hover {
+background-color: rgba(0, 123, 255, 0.3);
+}
+.photo-upload-btn i {
+margin-right: 8px;
+}
+.file-input {
+display: none;
+}
+.upload-progress {
+height: 4px;
+background-color: rgba(255, 255, 255, 0.2);
+border-radius: 2px;
+margin-top: 10px;
+overflow: hidden;
+}
+.progress-bar {
+height: 100%;
+background-color: #007BFF;
+width: 0%;
+transition: width 0.3s ease;
+}
+.status-indicator {
+display: flex;
+align-items: center;
+justify-content: center;
+margin-top: 10px;
+font-size: 14px;
+color: rgba(255, 255, 255, 0.7);
+}
+.status-indicator .loader {
+width: 14px;
+height: 14px;
+margin-right: 8px;
+}
+.status-indicator.success {
+color: #28a745;
+}
+.status-indicator.error {
+color: #dc3545;
+}
+.status-indicator i {
+margin-right: 8px;
+}
+@media (min-width: 768px) {
+.container {
+  width: 500px;
+  padding: 30px;
+}
+.radio-group {
+  flex-direction: row;
+}
+.radio-group label {
+  margin: 0 5px;
+}
+    nav ul {
+                display: flex !important;
+            }
+        }
+              ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #007BFF;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #0056b3;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #15151D;
+            border-radius: 4px;
+        }
+
+        .find-us {
+            background-color: #0F0F16;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .find-us:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .find-us h2 {
+            color: #0079ff;
+            margin-bottom: 15px;
+        }
+}
 </style>
 </head>
 <body>
 <div class="notifications-container" id="notificationsContainer"></div>
-<div class="form-container">
-  <div class="form-banner"></div>
-  <h1>Онлайн Зміна #01</h1>
-  <h2><span style="color: #9A9893;">* * *</span></h2>
-  <p>Тут Ви вказуєте початок зміни та її кінець. <br><br>При початку зміни - вказуєте лише час в пункті "Початок зміни", і з закінченням так само.</p>
-  <form id="shiftForm">
-    <div class="block">
-      <label for="nickname"><i class="fas fa-user"></i> Nick Name:</label>
-      <input type="text" id="nickname" name="nickname" placeholder="Введіть нікнейм" required>
-    </div>
-    <div class="block">
-      <label><i class="fas fa-check-circle"></i> Виберіть тип зміни:</label>
-      <div class="radio-group">
-        <input type="radio" id="startShift" name="shiftType" value="start" required>
-        <label for="startShift">Почав(ла) онлайн зміну</label>
 
-        <input type="radio" id="endShift" name="shiftType" value="end" required>
-        <label for="endShift">Закінчив(ла) онлайн зміну</label>
-      </div>
+<div class="container" id="mainContainer">
+<div class="banner"></div>
+
+<!-- Форма авторизації -->
+<div id="loginForm" class="visible">
+<h1>Онлайн Зміна #01</h1>
+<h2><span style="color: #9A9893;">* * *</span></h2>
+<p>Увійдіть у систему або створіть новий обліковий запис</p>
+
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-button active" data-tab="login">Вхід</button>
+    <button class="tab-button" data-tab="register">Реєстрація</button>
+  </div>
+  
+  <div class="tab-content">
+    <!-- Вкладка входу -->
+    <div class="tab-pane active" id="login">
+      <form id="loginFormElement">
+        <div class="block">
+          <label for="loginEmail"><i class="fas fa-envelope"></i> Електронна пошта:</label>
+          <input type="email" id="loginEmail" name="email" placeholder="Введіть електронну пошту" required>
+        </div>
+        
+        <div class="block">
+          <label for="loginNickname"><i class="fas fa-user"></i> Нікнейм:</label>
+          <input type="text" id="loginNickname" name="nickname" placeholder="Введіть нікнейм" required>
+        </div>
+        
+        <div class="block">
+          <label for="loginPassword"><i class="fas fa-lock"></i> Пароль:</label>
+          <input type="password" id="loginPassword" name="password" placeholder="Введіть пароль" required>
+        </div>
+        
+        <div class="remember-me">
+          <input type="checkbox" id="rememberMe" name="rememberMe">
+          <label for="rememberMe">Запам'ятати мене</label>
+        </div>
+        
+        <div class="forgot-password">
+          <a href="#" id="forgotPasswordLink">Забули пароль?</a>
+        </div>
+        
+        <button type="submit" id="loginButton">
+          <span class="button-text">Увійти</span>
+        </button>
+      </form>
     </div>
-    <div class="block">
-      <label for="time"><i class="fas fa-clock"></i> Час:</label>
-      <input type="time" id="time" name="time" required>
+    
+    <!-- Вкладка реєстрації -->
+    <div class="tab-pane" id="register">
+      <form id="registerFormElement">
+        <div class="block">
+          <label for="registerEmail"><i class="fas fa-envelope"></i> Електронна пошта:</label>
+          <input type="email" id="registerEmail" name="email" placeholder="Введіть електронну пошту" required>
+        </div>
+        
+        <div class="block">
+          <label for="registerNickname"><i class="fas fa-user"></i> Нікнейм:</label>
+          <input type="text" id="registerNickname" name="nickname" placeholder="Введіть нікнейм" required>
+        </div>
+        
+        <div class="block">
+          <label for="registerPassword"><i class="fas fa-lock"></i> Пароль:</label>
+          <input type="password" id="registerPassword" name="password" placeholder="Введіть пароль" required>
+        </div>
+        
+        <div class="block">
+          <label for="registerPasswordConfirm"><i class="fas fa-lock"></i> Підтвердження пароля:</label>
+          <input type="password" id="registerPasswordConfirm" name="passwordConfirm" placeholder="Підтвердіть пароль" required>
+        </div>
+        
+        <button type="submit" id="registerButton">
+          <span class="button-text">Зареєструватися</span>
+        </button>
+      </form>
     </div>
-    <button type="submit" id="submitButton">
-      <span class="button-text">Надіслати</span>
-      <span class="button-cooldown"></span>
-    </button>
-  </form>
+  </div>
+</div>
+</div>
+
+<!-- Головний екран після авторизації -->
+<div id="dashboardScreen" class="hidden">
+<button class="back-button" id="logoutButton">
+  <i class="fas fa-sign-out-alt"></i> Вийти
+</button>
+
+<div class="profile-picture" id="profilePicture"></div>
+<div class="welcome-message">Вітаю, <span id="userNameDisplay">Користувач</span>!</div>
+
+<!-- Індикатор активної зміни -->
+<div class="active-shift-indicator hidden" id="activeShiftIndicator">
+  <div>
+    <i class="fas fa-clock"></i>
+    <span>Активна зміна з </span>
+    <span class="active-shift-time" id="activeShiftTime">00:00</span>
+  </div>
+  <button id="endActiveShiftButton" class="back-button">
+    Закінчити <i class="fas fa-arrow-right"></i>
+  </button>
+</div>
+
+<!-- Статистика -->
+<div class="stats-container">
+  <div class="stat-box">
+    <h4>Всього змін</h4>
+    <p id="totalShiftsCount">0</p>
+  </div>
+  <div class="stat-box">
+    <h4>Цього тижня</h4>
+    <p id="weeklyHours">0 год</p>
+  </div>
+  <div class="stat-box">
+    <h4>Середній час</h4>
+    <p id="averageTime">0 год</p>
+  </div>
+</div>
+
+<h2>Обери дію:</h2>
+
+<!-- Картки дій -->
+<div id="actionCards">
+  <div class="action-card" id="startShiftCard">
+    <i class="fas fa-play-circle"></i>
+    <h3>Почати зміну</h3>
+    <p>Зафіксувати початок робочого часу</p>
+  </div>
+  
+  <div class="action-card" id="viewHistoryCard">
+    <i class="fas fa-history"></i>
+    <h3>Історія змін</h3>
+    <p>Переглянути попередні зміни</p>
+  </div>
+  
+  <div class="action-card" id="profileSettingsCard">
+    <i class="fas fa-user-cog"></i>
+    <h3>Налаштування</h3>
+    <p>Змінити особисті дані</p>
+  </div>
+</div>
+</div>
+
+<!-- Екран початку зміни -->
+<div id="startShiftScreen" class="hidden">
+<button class="back-button" id="backFromStartShift">
+  <i class="fas fa-arrow-left"></i> Назад
+</button>
+
+<h1>Початок зміни</h1>
+<p>Підтвердіть початок вашої зміни</p>
+
+<form id="startShiftForm">
+  <div class="block">
+    <label for="startShiftTime"><i class="fas fa-clock"></i> Час початку:</label>
+    <input type="time" id="startShiftTime" name="time" required>
+  </div>
+  
+  <button type="submit" id="confirmStartShiftButton">
+    <span class="button-text">Почати зміну</span>
+    <span class="button-cooldown"></span>
+  </button>
+</form>
+</div>
+
+<!-- Екран закінчення зміни -->
+<div id="endShiftScreen" class="hidden">
+<button class="back-button" id="backFromEndShift">
+  <i class="fas fa-arrow-left"></i> Назад
+</button>
+
+<h1>Закінчення зміни</h1>
+<p>Підтвердіть закінчення вашої зміни</p>
+
+<form id="endShiftForm">
+  <div class="block">
+    <label><i class="fas fa-hourglass-start"></i> Час початку:</label>
+    <div id="displayStartTime" class="active-shift-time">00:00</div>
+  </div>
+  
+  <div class="block">
+    <label for="endShiftTime"><i class="fas fa-hourglass-end"></i> Час закінчення:</label>
+    <input type="time" id="endShiftTime" name="time" required>
+  </div>
+  
+  <button type="submit" id="confirmEndShiftButton">
+    <span class="button-text">Закінчити зміну</span>
+    <span class="button-cooldown"></span>
+  </button>
+</form>
+</div>
+
+<!-- Екран історії змін -->
+<div id="historyScreen" class="hidden">
+<button class="back-button" id="backFromHistory">
+  <i class="fas fa-arrow-left"></i> Назад
+</button>
+
+<h1>Історія змін</h1>
+<p>Ваші попередні зміни</p>
+
+<div class="shift-history" id="shiftHistoryContainer">
+  <!-- Тут будуть відображатися записи історії змін -->
+  <div class="status-indicator">
+    <div class="loader"></div>
+    <span>Завантаження історії...</span>
+  </div>
+</div>
+</div>
+
+<!-- Екран налаштувань профілю -->
+<div id="profileScreen" class="hidden">
+<button class="back-button" id="backFromProfile">
+  <i class="fas fa-arrow-left"></i> Назад
+</button>
+
+<h1>Налаштування профілю</h1>
+<p>Змініть ваші особисті дані</p>
+
+<form id="profileForm">
+  <div class="photo-upload-container">
+    <div class="photo-preview" id="photoPreview"></div>
+    <label for="photoUpload" class="photo-upload-btn">
+      <i class="fas fa-camera"></i> Завантажити фото профілю
+    </label>
+    <input type="file" id="photoUpload" class="file-input" accept="image/*">
+    <div class="upload-progress" id="uploadProgress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+  
+  <div class="block">
+    <label for="profileEmail"><i class="fas fa-envelope"></i> Електронна пошта:</label>
+    <input type="email" id="profileEmail" name="email" placeholder="Електронна пошта" disabled>
+  </div>
+  
+  <div class="block">
+    <label for="profileNickname"><i class="fas fa-user"></i> Нікнейм:</label>
+    <input type="text" id="profileNickname" name="nickname" placeholder="Нікнейм" required>
+  </div>
+  
+  <div class="block">
+    <label for="profileNewPassword"><i class="fas fa-lock"></i> Новий пароль (залиште порожнім, щоб не змінювати):</label>
+    <input type="password" id="profileNewPassword" name="newPassword" placeholder="Новий пароль">
+  </div>
+  
+  <div class="block">
+    <label for="profileCurrentPassword"><i class="fas fa-shield-alt"></i> Поточний пароль (для підтвердження змін):</label>
+    <input type="password" id="profileCurrentPassword" name="currentPassword" placeholder="Поточний пароль" required>
+  </div>
+  
+  <button type="submit" id="saveProfileButton">
+    <span class="button-text">Зберегти зміни</span>
+  </button>
+</form>
+</div>
+
+<!-- Екран відновлення пароля -->
+<div id="forgotPasswordScreen" class="hidden">
+<button class="back-button" id="backFromForgotPassword">
+  <i class="fas fa-arrow-left"></i> Назад
+</button>
+
+<h1>Відновлення пароля</h1>
+<p>Введіть вашу електронну пошту для відновлення пароля</p>
+
+<form id="forgotPasswordForm">
+  <div class="block">
+    <label for="resetPasswordEmail"><i class="fas fa-envelope"></i> Електронна пошта:</label>
+    <input type="email" id="resetPasswordEmail" name="email" placeholder="Введіть електронну пошту" required>
+  </div>
+  
+  <button type="submit" id="sendResetLinkButton">
+    <span class="button-text">Надіслати посилання</span>
+  </button>
+</form>
+</div>
 </div>
 
 <script>
-  // Конфігурація Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDWDZEbWZnQJj7c-QZmtqILnLrCUzVXZgk",
-    authDomain: "online-ukraine-gta.firebaseapp.com",
-    databaseURL: "https://online-ukraine-gta-default-rtdb.firebaseio.com",
-    projectId: "online-ukraine-gta",
-    storageBucket: "online-ukraine-gta.appspot.com",
-    messagingSenderId: "1068307395139",
-    appId: "1:1068307395139:web:a2d5d7f0d4e5d4b1d4b4b4"
-  };
+// Конфігурація Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyC3NflzgYNlzKXynoEiuuemEY44ufd5_RM",
+  authDomain: "online-ukraine-gta.firebaseapp.com",
+  databaseURL: "https://online-ukraine-gta-default-rtdb.firebaseio.com",
+  projectId: "online-ukraine-gta",
+  storageBucket: "online-ukraine-gta.firebasestorage.app",
+  messagingSenderId: "965823880422",
+  appId: "1:965823880422:web:319df7599b628d2fceaf27",
+  measurementId: "G-QPFJ09ZXWB"
+};
 
-  // Ініціалізація Firebase
-  firebase.initializeApp(firebaseConfig);
+// Ініціалізація Firebase
+let auth, database;
+try {
+firebase.initializeApp(firebaseConfig);
+// Встановлюємо обробник помилок для Firebase
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .catch(error => {
+    console.error("Помилка встановлення персистентності:", error);
+  });
+auth = firebase.auth();
+database = firebase.database();
+console.log("Firebase успішно ініціалізовано");
+} catch (error) {
+console.error("Помилка ініціалізації Firebase:", error);
+showNotification('Помилка', 'Не вдалося підключитися до сервера. Перевірте з\'єднання з інтернетом.', 'error');
+}
 
-  document.addEventListener('DOMContentLoaded', async (event) => {
-    const form = document.getElementById('shiftForm');
-    const submitButton = document.getElementById('submitButton');
-    const cooldownElement = submitButton.querySelector('.button-cooldown');
-    let cooldownTimer;
+// Imgur API клієнт ID
+const IMGUR_CLIENT_ID = 'cc7bda6e0fd7c98';
 
-    // Функція для відображення повідомлень
-    function showNotification(title, message, isError = false) {
-      const notificationsContainer = document.getElementById('notificationsContainer');
-      const notification = document.createElement('div');
-      notification.className = `notification ${isError ? 'error' : 'success'}`;
-      
-      const notificationHeader = document.createElement('div');
-      notificationHeader.className = 'notification-header';
-      
-      const notificationTitle = document.createElement('div');
-      notificationTitle.className = 'notification-title';
-      notificationTitle.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${title}`;
-      
-      const closeButton = document.createElement('button');
-      closeButton.className = 'notification-close';
-      closeButton.innerHTML = '&times;';
-      closeButton.onclick = () => notification.remove();
-      
-      notificationHeader.appendChild(notificationTitle);
-      notificationHeader.appendChild(closeButton);
-      
-      const content = document.createElement('div');
-      content.className = 'notification-content';
-      content.textContent = message;
-      
-      const time = document.createElement('div');
-      time.className = 'notification-time';
-      time.textContent = new Date().toLocaleTimeString();
-      
-      notification.appendChild(notificationHeader);
-      notification.appendChild(content);
-      notification.appendChild(time);
-      
-      notificationsContainer.appendChild(notification);
-      
-      setTimeout(() => {
-        notification.remove();
-      }, 8000);
-    }
+// Кешування DOM-елементів для оптимізації
+const elements = {
+notificationsContainer: document.getElementById('notificationsContainer'),
+totalShiftsCount: document.getElementById('totalShiftsCount'),
+weeklyHours: document.getElementById('weeklyHours'),
+averageTime: document.getElementById('averageTime'),
+userNameDisplay: document.getElementById('userNameDisplay'),
+profilePicture: document.getElementById('profilePicture'),
+activeShiftIndicator: document.getElementById('activeShiftIndicator'),
+activeShiftTime: document.getElementById('activeShiftTime'),
+displayStartTime: document.getElementById('displayStartTime'),
+historyContainer: document.getElementById('shiftHistoryContainer'),
+profileEmail: document.getElementById('profileEmail'),
+profileNickname: document.getElementById('profileNickname'),
+startShiftTime: document.getElementById('startShiftTime'),
+endShiftTime: document.getElementById('endShiftTime'),
+photoUpload: document.getElementById('photoUpload'),
+photoPreview: document.getElementById('photoPreview'),
+progressBar: document.getElementById('progressBar'),
+uploadProgress: document.getElementById('uploadProgress'),
+endActiveShiftButton: document.getElementById('endActiveShiftButton'),
+confirmEndShiftButton: document.getElementById('confirmEndShiftButton'),
+confirmStartShiftButton: document.getElementById('confirmStartShiftButton'),
+};
 
-    // Функція для запуску анімації перезарядки
-    function startCooldown() {
-      submitButton.disabled = true;
-      cooldownElement.style.transform = 'translateX(0)';
-      cooldownTimer = setTimeout(() => {
-        submitButton.disabled = false;
-        cooldownElement.style.transform = 'translateX(-100%)';
-      }, 30000);
-    }
+// Функція для відображення повідомлень
+function showNotification(title, message, type = 'info') {
+const notification = document.createElement('div');
+notification.className = `notification ${type}`;
 
-    // Функція для скидання анімації перезарядки
-    function resetCooldown() {
-      clearTimeout(cooldownTimer);
-      submitButton.disabled = false;
-      cooldownElement.style.transform = 'translateX(-100%)';
-    }
+const notificationHeader = document.createElement('div');
+notificationHeader.className = 'notification-header';
 
-    // Отримання конфігурації з Firebase
-    try {
-      const dbRef = firebase.database().ref('config01');
-      const snapshot = await dbRef.once('value');
-      const CONFIG = snapshot.val();
+const notificationTitle = document.createElement('div');
+notificationTitle.className = 'notification-title';
+
+let iconClass = 'fa-info-circle';
+if (type === 'success') iconClass = 'fa-check-circle';
+if (type === 'error') iconClass = 'fa-exclamation-circle';
+if (type === 'warning') iconClass = 'fa-exclamation-triangle';
+
+notificationTitle.innerHTML = `<i class="fas ${iconClass}"></i> ${title}`;
+
+const closeButton = document.createElement('button');
+closeButton.className = 'notification-close';
+closeButton.innerHTML = '&times;';
+closeButton.onclick = () => notification.remove();
+
+notificationHeader.appendChild(notificationTitle);
+notificationHeader.appendChild(closeButton);
+
+const content = document.createElement('div');
+content.className = 'notification-content';
+content.textContent = message;
+
+const time = document.createElement('div');
+time.className = 'notification-time';
+time.textContent = new Date().toLocaleTimeString();
+
+notification.appendChild(notificationHeader);
+notification.appendChild(content);
+notification.appendChild(time);
+
+elements.notificationsContainer.appendChild(notification);
+
+setTimeout(() => {
+  notification.remove();
+}, 8000);
+}
+
+// Функція для переключення між екранами
+function showScreen(screenId) {
+const screens = [
+  'loginForm', 'dashboardScreen', 'startShiftScreen', 
+  'endShiftScreen', 'historyScreen', 'profileScreen',
+  'forgotPasswordScreen'
+];
+
+screens.forEach(screen => {
+  const element = document.getElementById(screen);
+  if (screen === screenId) {
+    element.classList.remove('hidden');
+    element.classList.add('visible');
+  } else {
+    element.classList.remove('visible');
+    element.classList.add('hidden');
+  }
+});
+}
+
+// Функція для переключення між вкладками
+function switchTab(tabId) {
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabPanes = document.querySelectorAll('.tab-pane');
+
+tabButtons.forEach(button => {
+  if (button.getAttribute('data-tab') === tabId) {
+    button.classList.add('active');
+  } else {
+    button.classList.remove('active');
+  }
+});
+
+tabPanes.forEach(pane => {
+  if (pane.id === tabId) {
+    pane.classList.add('active');
+  } else {
+    pane.classList.remove('active');
+  }
+});
+}
+
+// Функція для форматування часу
+function formatTime(date) {
+return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Функція для обчислення тривалості між двома часами
+function calculateDuration(startTime, endTime) {
+const start = new Date(`2000-01-01T${startTime}`);
+const end = new Date(`2000-01-01T${endTime}`);
+
+// Якщо кінцевий час менший за початковий, додаємо 1 день
+if (end < start) {
+  end.setDate(end.getDate() + 1);
+}
+
+const diffMs = end - start;
+const diffHrs = Math.floor(diffMs / 3600000);
+const diffMins = Math.round((diffMs % 3600000) / 60000);
+
+return `${diffHrs}:${diffMins.toString().padStart(2, '0')}`;
+}
+
+// Функція для отримання поточного часу у форматі HH:MM
+function getCurrentTime() {
+const now = new Date();
+return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+}
+
+// Функція для завантаження даних користувача
+async function loadUserData(userId) {
+try {
+  const userRef = database.ref(`users/${userId}`);
+  const snapshot = await userRef.once('value');
+  return snapshot.val() || {};
+} catch (error) {
+  console.error('Помилка завантаження даних користувача:', error);
+  showNotification('Помилка', 'Не вдалося завантажити дані користувача', 'error');
+  return {};
+}
+}
+
+// Функція для оновлення статистики користувача
+async function updateUserStats(userId) {
+try {
+  const userRef = database.ref(`users/${userId}`);
+  const shiftsRef = database.ref(`shifts/${userId}`);
+  
+  const shiftsSnapshot = await shiftsRef.once('value');
+  const shifts = shiftsSnapshot.val() || {};
+  
+  let totalShifts = 0;
+  let totalHours = 0;
+  let weeklyHours = 0;
+  
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  
+  Object.values(shifts).forEach(shift => {
+    if (shift.endTime) {
+      totalShifts++;
       
-      if (!CONFIG || !CONFIG.GOOGLE_SHEET_URL || !CONFIG.DISCORD_WEBHOOK_URL) {
-        throw new Error('Не вдалося отримати конфігурацію з Firebase');
+      const duration = shift.duration || '0:00';
+      const [hours, minutes] = duration.split(':').map(Number);
+      const durationHours = hours + (minutes / 60);
+      
+      totalHours += durationHours;
+      
+      const shiftDate = new Date(shift.date);
+      if (shiftDate >= startOfWeek) {
+        weeklyHours += durationHours;
       }
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        if (submitButton.disabled) {
-          return;
-        }
-
-        const formData = new FormData(form);
-        const nickname = formData.get('nickname');
-        const shiftType = formData.get('shiftType');
-        const time = formData.get('time');
-
-        if (!nickname || !shiftType || !time) {
-          showNotification('Помилка', 'Будь ласка, заповніть усі поля!', true);
-          return;
-        }
-
-        startCooldown();
-
-        const shiftTypeText = shiftType === 'start' ? 'почав(ла) онлайн зміну' : 'закінчив(ла) онлайн зміну';
-
-        try {
-          showNotification('Обробка', 'Відправка даних на Google Sheets...');
-          const googleSheetResponse = await fetch(CONFIG.GOOGLE_SHEET_URL, {
-            method: 'POST',
-            body: new URLSearchParams({
-              nickname,
-              shiftType: shiftTypeText,
-              time
-            }),
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            }
-          });
-
-          if (!googleSheetResponse.ok) {
-            throw new Error('Не вдалося надіслати дані в Google Sheets');
-          }
-
-          showNotification('Успіх', 'Дані успішно відправлені на Google Sheets');
-
-          showNotification('Обробка', 'Відправка даних на Discord...');
-          const discordResponse = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              username: 'UKRAINE GTA #01',
-              avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
-              embeds: [{
-                color: shiftType === 'start' ? 0x00ff00 : 0xff0000,
-                title: shiftType === 'start' ? '🟢 Початок онлайн зміни' : '🔴 Кінець онлайн зміни',
-                description: `**${nickname}** ${shiftTypeText}`,
-                fields: [
-                  {
-                    name: '⏰ Час',
-                    value: time,
-                    inline: true
-                  },
-                  {
-                    name: '📅 Дата',
-                    value: new Date().toLocaleDateString('uk-UA', {
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    }),
-                    inline: true
-                  }
-                ],
-                footer: {
-                  text: 'UKRAINE GTA #01 - Система обліку онлайн змін'
-                },
-                timestamp: new Date().toISOString()
-              }]
-            }),
-          });
-
-          if (!discordResponse.ok) {
-            throw new Error('Не вдалося надіслати повідомлення в Discord');
-          }
-
-          showNotification('Успіх', 'Дані успішно відправлені на Discord');
-          showNotification('Успіх', 'Дані успішно надіслані! З повагою @daniil_staff');
-          form.reset();
-
-        } catch (error) {
-          showNotification('Помилка', `Помилка при відправленні: ${error.message}`, true);
-          resetCooldown();
-        }
-      });
-
-    } catch (error) {
-      showNotification('Помилка', 'Помилка отримання даних Firebase. Будь ласка, зв\'яжіться із розробником @daniil_staff.', true);
     }
   });
+  
+  const averageTime = totalShifts > 0 ? (totalHours / totalShifts) : 0;
+  
+  // Оновлюємо елементи інтерфейсу
+  elements.totalShiftsCount.textContent = totalShifts;
+  elements.weeklyHours.textContent = `${weeklyHours.toFixed(1)} год`;
+  elements.averageTime.textContent = `${averageTime.toFixed(1)} год`;
+  
+  // Оновлюємо дані в базі
+  await userRef.update({
+    stats: {
+      totalShifts,
+      totalHours,
+      weeklyHours,
+      averageTime
+    }
+  });
+  
+  return { totalShifts, totalHours, weeklyHours, averageTime };
+} catch (error) {
+  console.error('Помилка оновлення статистики:', error);
+  return null;
+}
+}
+
+// Функція для перевірки наявності активної зміни
+async function checkActiveShift(userId) {
+try {
+  const activeShiftRef = database.ref(`users/${userId}/activeShift`);
+  const snapshot = await activeShiftRef.once('value');
+  const activeShift = snapshot.val();
+  
+  if (activeShift) {
+    elements.activeShiftTime.textContent = activeShift.startTime;
+    elements.displayStartTime.textContent = activeShift.startTime;
+    elements.activeShiftIndicator.classList.remove('hidden');
+    elements.endActiveShiftButton.style.display = 'flex';
+    return activeShift;
+  } else {
+    elements.activeShiftIndicator.classList.add('hidden');
+    elements.endActiveShiftButton.style.display = 'none';
+    return null;
+  }
+} catch (error) {
+  console.error('Помилка перевірки активної зміни:', error);
+  return null;
+}
+}
+
+// Функція для завантаження історії змін
+async function loadShiftHistory(userId) {
+try {
+  elements.historyContainer.innerHTML = '<div class="status-indicator"><div class="loader"></div><span>Завантаження історії...</span></div>';
+  
+  const shiftsRef = database.ref(`shifts/${userId}`).orderByChild('date');
+  const snapshot = await shiftsRef.once('value');
+  const shifts = snapshot.val() || {};
+  
+  // Конвертуємо об'єкт в масив і сортуємо за датою (від найновіших)
+  const shiftsArray = Object.entries(shifts).map(([id, shift]) => ({
+    id,
+    ...shift
+  })).sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  elements.historyContainer.innerHTML = '';
+  
+  if (shiftsArray.length === 0) {
+    elements.historyContainer.innerHTML = '<p>У вас ще немає завершених змін</p>';
+    return [];
+  }
+  
+  const completedShifts = [];
+  
+  shiftsArray.forEach(shift => {
+    if (shift.endTime) { // Показуємо тільки завершені зміни
+      completedShifts.push(shift);
+      
+      const shiftItem = document.createElement('div');
+      shiftItem.className = 'shift-item';
+      
+      const shiftInfo = document.createElement('div');
+      
+      const shiftDate = document.createElement('div');
+      shiftDate.className = 'shift-date';
+      shiftDate.textContent = new Date(shift.date).toLocaleDateString('uk-UA');
+      
+      const shiftTime = document.createElement('div');
+      shiftTime.className = 'shift-time';
+      shiftTime.textContent = `${shift.startTime} - ${shift.endTime}`;
+      
+      shiftInfo.appendChild(shiftDate);
+      shiftInfo.appendChild(shiftTime);
+      
+      const shiftDuration = document.createElement('div');
+      shiftDuration.className = 'shift-duration';
+      shiftDuration.textContent = shift.duration || 'N/A';
+      
+      shiftItem.appendChild(shiftInfo);
+      shiftItem.appendChild(shiftDuration);
+      
+      elements.historyContainer.appendChild(shiftItem);
+    }
+  });
+  
+  return completedShifts;
+} catch (error) {
+  console.error('Помилка завантаження історії змін:', error);
+  elements.historyContainer.innerHTML = '<div class="status-indicator error"><i class="fas fa-exclamation-circle"></i><span>Помилка завантаження історії</span></div>';
+  return [];
+}
+}
+
+// Функція для відправки даних в Google Sheets з обчисленою кількістю змін
+async function sendToGoogleSheets(data) {
+try {
+  // Отримуємо URL з Firebase
+  const configRef = database.ref('config01');
+  const snapshot = await configRef.once('value');
+  const CONFIG = snapshot.val();
+  
+  if (!CONFIG || !CONFIG.GOOGLE_SHEET_URL) {
+    throw new Error('Не вдалося отримати URL Google Sheets');
+  }
+  
+  // Форматуємо дані для відправки
+  const formData = {
+    nickname: data.nickname,
+    date: data.date,
+    startTime: data.startTime,
+    endTime: data.endTime,
+    duration: data.duration,
+    totalShifts: data.totalShifts || 0,
+    weeklyHours: data.weeklyHours || 0,
+    averageTime: data.averageTime || 0
+  };
+  
+  console.log('Відправка даних в Google Sheets:', formData);
+  
+  const response = await fetch(CONFIG.GOOGLE_SHEET_URL, {
+    method: 'POST',
+    body: new URLSearchParams(formData),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error('Не вдалося надіслати дані в Google Sheets');
+  }
+  
+  console.log('Дані успішно відправлені в Google Sheets');
+  return true;
+} catch (error) {
+  console.error('Помилка відправки в Google Sheets:', error);
+  throw error;
+}
+}
+
+// Функція для відправки даних в Discord
+async function sendToDiscord(data) {
+try {
+  // Отримуємо URL з Firebase
+  const configRef = database.ref('config01');
+  const snapshot = await configRef.once('value');
+  const CONFIG = snapshot.val();
+  
+  if (!CONFIG || !CONFIG.DISCORD_WEBHOOK_URL) {
+    throw new Error('Не вдалося отримати URL Discord Webhook');
+  }
+  
+  console.log('Відправка даних в Discord:', data);
+  
+  const response = await fetch(CONFIG.DISCORD_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    throw new Error('Не вдалося надіслати повідомлення в Discord');
+  }
+  
+  console.log('Дані успішно відправлені в Discord');
+  return true;
+} catch (error) {
+  console.error('Помилка відправки в Discord:', error);
+  throw error;
+}
+}
+
+// Функція для завантаження зображення на Imgur
+async function uploadImageToImgur(file) {
+try {
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  elements.progressBar.style.width = '0%';
+  elements.uploadProgress.style.display = 'block';
+  
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.imgur.com/3/image');
+  xhr.setRequestHeader('Authorization', `Client-ID ${IMGUR_CLIENT_ID}`);
+  
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) {
+      const progress = (e.loaded / e.total) * 100;
+      elements.progressBar.style.width = `${progress}%`;
+    }
+  };
+  
+  return new Promise((resolve, reject) => {
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          resolve(response.data.link);
+        } else {
+          reject(new Error('Помилка завантаження зображення на Imgur'));
+        }
+      } else {
+        reject(new Error(`Помилка HTTP: ${xhr.status}`));
+      }
+    };
+    
+    xhr.onerror = () => {
+      reject(new Error('Помилка мережі при завантаженні зображення'));
+    };
+    
+    xhr.send(formData);
+  });
+} catch (error) {
+  console.error('Помилка завантаження зображення:', error);
+  throw error;
+} finally {
+  setTimeout(() => {
+    elements.uploadProgress.style.display = 'none';
+  }, 1000);
+}
+}
+
+// Функція для оновлення фото профілю
+async function updateProfilePhoto(userId, photoURL) {
+try {
+  await database.ref(`users/${userId}`).update({
+    photoURL
+  });
+  
+  // Оновлюємо відображення фото профілю
+  elements.profilePicture.style.backgroundImage = `url(${photoURL})`;
+  elements.profilePicture.textContent = '';
+  elements.photoPreview.style.backgroundImage = `url(${photoURL})`;
+  
+} catch (error) {
+  console.error('Помилка оновлення фото профілю:', error);
+  throw error;
+}
+}
+
+// Обробники подій для вкладок
+document.querySelectorAll('.tab-button').forEach(button => {
+button.addEventListener('click', () => {
+  const tabId = button.getAttribute('data-tab');
+  switchTab(tabId);
+});
+});
+
+// Обробник для форми входу
+document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const email = document.getElementById('loginEmail').value;
+const nickname = document.getElementById('loginNickname').value;
+const password = document.getElementById('loginPassword').value;
+const rememberMe = document.getElementById('rememberMe').checked;
+
+if (!email || !nickname || !password) {
+  showNotification('Помилка', 'Заповніть усі поля', 'error');
+  return;
+}
+
+try {
+  // Спочатку перевіряємо, чи існує користувач з таким нікнеймом
+  const usersRef = database.ref('users');
+  const snapshot = await usersRef.orderByChild('nickname').equalTo(nickname).once('value');
+  
+  if (!snapshot.exists()) {
+    showNotification('Помилка', 'Користувача з таким нікнеймом не знайдено', 'error');
+    return;
+  }
+  
+  // Знаходимо користувача з відповідною поштою
+  let userFound = false;
+  let userData;
+  
+  snapshot.forEach((childSnapshot) => {
+    const user = childSnapshot.val();
+    if (user.email === email) {
+      userFound = true;
+      userData = user;
+      userData.id = childSnapshot.key;
+    }
+  });
+  
+  if (!userFound) {
+    showNotification('Помилка', 'Електронна пошта не відповідає нікнейму', 'error');
+    return;
+  }
+  
+  // Авторизуємося через Firebase Auth
+  await auth.signInWithEmailAndPassword(email, password);
+  
+  // Зберігаємо дані в localStorage, якщо потрібно
+  if (rememberMe) {
+    localStorage.setItem('userEmail', email);
+    localStorage.setItem('userNickname', nickname);
+  } else {
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userNickname');
+  }
+  
+  showNotification('Успіх', 'Ви успішно увійшли в систему', 'success');
+  
+  // Оновлюємо інтерфейс
+  elements.userNameDisplay.textContent = nickname;
+  
+  // Встановлюємо фото профілю або ініціали
+  if (userData.photoURL) {
+    elements.profilePicture.style.backgroundImage = `url(${userData.photoURL})`;
+    elements.profilePicture.textContent = '';
+    elements.photoPreview.style.backgroundImage = `url(${userData.photoURL})`;
+  } else {
+    elements.profilePicture.style.backgroundImage = '';
+    elements.profilePicture.textContent = nickname.charAt(0).toUpperCase();
+    elements.photoPreview.style.backgroundImage = '';
+  }
+  
+  // Заповнюємо форму профілю
+  elements.profileEmail.value = email;
+  elements.profileNickname.value = nickname;
+  
+  // Перевіряємо наявність активної зміни
+  await checkActiveShift(userData.id);
+  
+  // Оновлюємо статистику
+  await updateUserStats(userData.id);
+  
+  // Переходимо на головний екран
+  showScreen('dashboardScreen');
+  
+} catch (error) {
+  console.error('Помилка входу:', error);
+  
+  let errorMessage = 'Не вдалося увійти';
+  
+  if (error.code === 'auth/wrong-password') {
+    errorMessage = 'Невірний пароль';
+  } else if (error.code === 'auth/user-not-found') {
+    errorMessage = 'Користувача з такою поштою не знайдено';
+  } else if (error.code === 'auth/invalid-email') {
+    errorMessage = 'Невірний формат електронної пошти';
+  } else if (error.code === 'auth/too-many-requests') {
+    errorMessage = 'Забагато спроб входу. Спробуйте пізніше';
+  } else if (error.code === 'auth/network-request-failed') {
+    errorMessage = 'Проблеми з мережею. Перевірте з\'єднання';
+  } else if (error.message) {
+    errorMessage = error.message;
+  }
+  
+  showNotification('Помилка', errorMessage, 'error');
+}
+});
+
+// Обробник для форми реєстрації
+document.getElementById('registerFormElement').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const email = document.getElementById('registerEmail').value;
+const nickname = document.getElementById('registerNickname').value;
+const password = document.getElementById('registerPassword').value;
+const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+if (!email || !nickname || !password || !passwordConfirm) {
+  showNotification('Помилка', 'Заповніть усі поля', 'error');
+  return;
+}
+
+if (password !== passwordConfirm) {
+  showNotification('Помилка', 'Паролі не співпадають', 'error');
+  return;
+}
+
+if (password.length < 6) {
+  showNotification('Помилка', 'Пароль має бути не менше 6 символів', 'error');
+  return;
+}
+
+try {
+  // Перевіряємо, чи існує користувач з таким нікнеймом
+  const usersRef = database.ref('users');
+  const snapshot = await usersRef.orderByChild('nickname').equalTo(nickname).once('value');
+  
+  if (snapshot.exists()) {
+    showNotification('Помилка', 'Користувач з таким нікнеймом вже існує', 'error');
+    return;
+  }
+  
+  // Створюємо користувача в Firebase Auth
+  const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+  const userId = userCredential.user.uid;
+  
+  // Зберігаємо дані користувача в Realtime Database
+  await database.ref(`users/${userId}`).set({
+    email,
+    nickname,
+    createdAt: new Date().toISOString(),
+    stats: {
+      totalShifts: 0,
+      totalHours: 0,
+      weeklyHours: 0,
+      averageTime: 0
+    }
+  });
+  
+  showNotification('Успіх', 'Реєстрація успішна! Тепер ви можете увійти', 'success');
+  
+  // Переключаємося на вкладку входу
+  switchTab('login');
+  
+  // Заповнюємо поля входу
+  document.getElementById('loginEmail').value = email;
+  document.getElementById('loginNickname').value = nickname;
+  
+} catch (error) {
+  console.error('Помилка реєстрації:', error);
+  
+  let errorMessage = 'Не вдалося зареєструватися';
+  
+  if (error.code === 'auth/email-already-in-use') {
+    errorMessage = 'Користувач з такою поштою вже існує';
+  } else if (error.code === 'auth/invalid-email') {
+    errorMessage = 'Невірний формат електронної пошти';
+  } else if (error.code === 'auth/weak-password') {
+    errorMessage = 'Пароль занадто слабкий';
+  } else if (error.code === 'auth/network-request-failed') {
+    errorMessage = 'Проблеми з мережею. Перевірте з\'єднання';
+  } else if (error.code === 'auth/api-key-not-valid') {
+    errorMessage = 'Помилка конфігурації Firebase. Зверніться до адміністратора';
+  } else if (error.message) {
+    errorMessage = error.message;
+  }
+  
+  showNotification('Помилка', errorMessage, 'error');
+}
+});
+
+// Обробник для кнопки "Забули пароль"
+document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+e.preventDefault();
+showScreen('forgotPasswordScreen');
+});
+
+// Обробник для форми відновлення пароля
+document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const email = document.getElementById('resetPasswordEmail').value;
+
+if (!email) {
+  showNotification('Помилка', 'Введіть електронну пошту', 'error');
+  return;
+}
+
+try {
+  await auth.sendPasswordResetEmail(email);
+  
+  showNotification('Успіх', 'Посилання для відновлення пароля надіслано на вашу пошту', 'success');
+  
+  setTimeout(() => {
+    showScreen('loginForm');
+  }, 3000);
+  
+} catch (error) {
+  console.error('Помилка відновлення пароля:', error);
+  
+  let errorMessage = 'Не вдалося надіслати посилання';
+  
+  if (error.code === 'auth/user-not-found') {
+    errorMessage = 'Користувача з такою поштою не знайдено';
+  } else if (error.code === 'auth/invalid-email') {
+    errorMessage = 'Невірний формат електронної пошти';
+  } else if (error.code === 'auth/network-request-failed') {
+    errorMessage = 'Проблеми з мережею. Перевірте з\'єднання';
+  } else if (error.message) {
+    errorMessage = error.message;
+  }
+  
+  showNotification('Помилка', errorMessage, 'error');
+}
+});
+
+// Обробник для кнопки виходу
+document.getElementById('logoutButton').addEventListener('click', async () => {
+try {
+  await auth.signOut();
+  showNotification('Успіх', 'Ви вийшли з системи', 'success');
+  showScreen('loginForm');
+} catch (error) {
+  console.error('Помилка виходу:', error);
+  showNotification('Помилка', 'Не вдалося вийти: ' + error.message, 'error');
+}
+});
+
+// Обробники для кнопок навігації
+document.getElementById('backFromStartShift').addEventListener('click', () => {
+showScreen('dashboardScreen');
+});
+
+document.getElementById('backFromEndShift').addEventListener('click', () => {
+showScreen('dashboardScreen');
+});
+
+document.getElementById('backFromHistory').addEventListener('click', () => {
+showScreen('dashboardScreen');
+});
+
+document.getElementById('backFromProfile').addEventListener('click', () => {
+showScreen('dashboardScreen');
+});
+
+document.getElementById('backFromForgotPassword').addEventListener('click', () => {
+showScreen('loginForm');
+});
+
+// Обробники для карток дій
+document.getElementById('startShiftCard').addEventListener('click', async () => {
+const user = auth.currentUser;
+if (user) {
+  // Перевіряємо, чи немає вже активної зміни
+  const activeShift = await checkActiveShift(user.uid);
+  if (activeShift) {
+    showNotification('Увага', 'У вас вже є активна зміна', 'warning');
+    return;
+  }
+  
+  // Заповнюємо поле часу поточним значенням
+  elements.startShiftTime.value = getCurrentTime();
+  showScreen('startShiftScreen');
+} else {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+}
+});
+
+document.getElementById('viewHistoryCard').addEventListener('click', async () => {
+const user = auth.currentUser;
+if (user) {
+  showScreen('historyScreen');
+  await loadShiftHistory(user.uid);
+} else {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+}
+});
+
+document.getElementById('profileSettingsCard').addEventListener('click', () => {
+const user = auth.currentUser;
+if (user) {
+  showScreen('profileScreen');
+} else {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+}
+});
+
+// Обробник для кнопки закінчення активної зміни
+document.getElementById('endActiveShiftButton').addEventListener('click', async () => {
+const user = auth.currentUser;
+if (user) {
+  const activeShift = await checkActiveShift(user.uid);
+  if (activeShift) {
+    elements.endShiftTime.value = getCurrentTime();
+    showScreen('endShiftScreen');
+  } else {
+    showNotification('Помилка', 'У вас немає активної зміни', 'error');
+  }
+} else {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+}
+});
+
+// Обробник для форми початку зміни
+document.getElementById('startShiftForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const user = auth.currentUser;
+if (!user) {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+  return;
+}
+
+const startTime = elements.startShiftTime.value;
+
+if (!startTime) {
+  showNotification('Помилка', 'Вкажіть час початку зміни', 'error');
+  return;
+}
+
+try {
+  // Блокуємо кнопку, щоб запобігти багаторазовим натисканням
+  elements.confirmStartShiftButton.disabled = true;
+  
+  // Перевіряємо, чи немає вже активної зміни
+  const activeShift = await checkActiveShift(user.uid);
+  if (activeShift) {
+    showNotification('Помилка', 'У вас вже є активна зміна', 'error');
+    elements.confirmStartShiftButton.disabled = false;
+    return;
+  }
+  
+  // Отримуємо дані користувача
+  const userData = await loadUserData(user.uid);
+  
+  // Створюємо новий запис зміни
+  const shiftId = database.ref().child(`shifts/${user.uid}`).push().key;
+  const now = new Date();
+  const shiftData = {
+    id: shiftId,
+    startTime,
+    date: now.toISOString(),
+    status: 'active'
+  };
+  
+  console.log('Створення нової зміни:', shiftData);
+  
+  // Зберігаємо дані в Firebase
+  await database.ref(`shifts/${user.uid}/${shiftId}`).set(shiftData);
+  await database.ref(`users/${user.uid}/activeShift`).set({
+    shiftId,
+    startTime
+  });
+  
+  // Відправляємо дані в Discord
+  await sendToDiscord({
+    username: 'UKRAINE GTA #01',
+    avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
+    embeds: [{
+      color: 0x00ff00,
+      title: '🟢 Початок онлайн зміни',
+      description: `**${userData.nickname}** почав(ла) онлайн зміну`,
+      fields: [
+        {
+          name: '⏰ Час',
+          value: startTime,
+          inline: true
+        },
+        {
+          name: '📅 Дата',
+          value: now.toLocaleDateString('uk-UA', {
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          inline: true
+        }
+      ],
+      footer: {
+        text: 'UKRAINE GTA #01 - Система обліку онлайн змін'
+      },
+      timestamp: now.toISOString()
+    }]
+  });
+  
+  showNotification('Успіх', 'Зміна успішно розпочата', 'success');
+  
+  // Оновлюємо інтерфейс
+  await checkActiveShift(user.uid);
+  
+  // Затримка перед переходом на головний екран
+  setTimeout(() => {
+    showScreen('dashboardScreen');
+    elements.confirmStartShiftButton.disabled = false;
+  }, 2000);
+  
+} catch (error) {
+  console.error('Помилка початку зміни:', error);
+  showNotification('Помилка', 'Не вдалося розпочати зміну: ' + (error.message || 'Невідома помилка'), 'error');
+  elements.confirmStartShiftButton.disabled = false;
+}
+});
+
+// Обробник для форми закінчення зміни
+document.getElementById('endShiftForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const user = auth.currentUser;
+if (!user) {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+  return;
+}
+
+const endTime = elements.endShiftTime.value;
+
+if (!endTime) {
+  showNotification('Помилка', 'Вкажіть час закінчення зміни', 'error');
+  return;
+}
+
+try {
+  // Блокуємо кнопку, щоб запобігти багаторазовим натисканням
+  elements.confirmEndShiftButton.disabled = true;
+  
+  // Перевіряємо наявність активної зміни
+  const activeShift = await checkActiveShift(user.uid);
+  if (!activeShift) {
+    showNotification('Помилка', 'У вас немає активної зміни', 'error');
+    elements.confirmEndShiftButton.disabled = false;
+    return;
+  }
+  
+  // Отримуємо дані користувача
+  const userData = await loadUserData(user.uid);
+  
+  // Обчислюємо тривалість зміни
+  const duration = calculateDuration(activeShift.startTime, endTime);
+  
+  console.log('Завершення зміни:', {
+    startTime: activeShift.startTime,
+    endTime,
+    duration
+  });
+  
+  // Оновлюємо запис зміни
+  await database.ref(`shifts/${user.uid}/${activeShift.shiftId}`).update({
+    endTime,
+    duration,
+    status: 'completed'
+  });
+  
+  // Видаляємо активну зміну
+  await database.ref(`users/${user.uid}/activeShift`).remove();
+  
+  // Отримуємо статистику користувача
+  const stats = await updateUserStats(user.uid);
+
+  // Відправляємо дані в Google Sheets з розширеною інформацією
+  const now = new Date();
+  await sendToGoogleSheets({
+    nickname: userData.nickname,
+    date: now.toLocaleDateString('uk-UA'),
+    startTime: activeShift.startTime,
+    endTime: endTime,
+    duration: duration,
+    totalShifts: stats.totalShifts,
+    weeklyHours: stats.weeklyHours.toFixed(1),
+    averageTime: stats.averageTime.toFixed(1)
+  });
+  
+  // Відправляємо дані в Discord
+  await sendToDiscord({
+    username: 'UKRAINE GTA #01',
+    avatar_url: 'https://i.imgur.com/G6gEGdU.jpeg',
+    embeds: [{
+      color: 0xff0000,
+      title: '🔴 Кінець онлайн зміни',
+      description: `**${userData.nickname}** закінчив(ла) онлайн зміну`,
+      fields: [
+        {
+          name: '⏰ Час початку',
+          value: activeShift.startTime,
+          inline: true
+        },
+        {
+          name: '⏰ Час закінчення',
+          value: endTime,
+          inline: true
+        },
+        {
+          name: '⌛ Тривалість',
+          value: duration,
+          inline: true
+        },
+        {
+          name: '📅 Дата',
+          value: now.toLocaleDateString('uk-UA', {
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          inline: true
+        },
+        {
+          name: '📊 Всього змін',
+          value: stats.totalShifts.toString(),
+          inline: true
+        }
+      ],
+      footer: {
+        text: 'UKRAINE GTA #01 - Система обліку онлайн змін'
+      },
+      timestamp: now.toISOString()
+    }]
+  });
+  
+  showNotification('Успіх', 'Зміна успішно завершена', 'success');
+  
+  // Оновлюємо інтерфейс
+  await checkActiveShift(user.uid);
+  
+  // Затримка перед переходом на головний екран
+  setTimeout(() => {
+    showScreen('dashboardScreen');
+    elements.confirmEndShiftButton.disabled = false;
+  }, 2000);
+  
+} catch (error) {
+  console.error('Помилка закінчення зміни:', error);
+  showNotification('Помилка', 'Не вдалося завершити зміну: ' + (error.message || 'Невідома помилка'), 'error');
+  elements.confirmEndShiftButton.disabled = false;
+}
+});
+
+// Обробник для завантаження фото профілю
+elements.photoUpload.addEventListener('change', async (e) => {
+const user = auth.currentUser;
+if (!user) {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+  return;
+}
+
+const file = e.target.files[0];
+if (!file) return;
+
+// Перевіряємо тип файлу
+if (!file.type.startsWith('image/')) {
+  showNotification('Помилка', 'Будь ласка, виберіть зображення', 'error');
+  return;
+}
+
+// Перевіряємо розмір файлу (не більше 5 МБ)
+if (file.size > 5 * 1024 * 1024) {
+  showNotification('Помилка', 'Розмір файлу не повинен перевищувати 5 МБ', 'error');
+  return;
+}
+
+try {
+  // Показуємо попередній перегляд
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    elements.photoPreview.style.backgroundImage = `url(${event.target.result})`;
+  };
+  reader.readAsDataURL(file);
+  
+  // Завантажуємо зображення на Imgur
+  showNotification('Інформація', 'Завантаження фото...', 'info');
+  const imageUrl = await uploadImageToImgur(file);
+  
+  // Оновлюємо фото профілю в базі даних
+  await updateProfilePhoto(user.uid, imageUrl);
+  
+  showNotification('Успіх', 'Фото профілю успішно оновлено', 'success');
+} catch (error) {
+  console.error('Помилка завантаження фото:', error);
+  showNotification('Помилка', 'Не вдалося завантажити фото: ' + (error.message || 'Невідома помилка'), 'error');
+}
+});
+
+// Обробник для кліку на фото профілю на головному екрані
+elements.profilePicture.addEventListener('click', () => {
+const user = auth.currentUser;
+if (user) {
+  showScreen('profileScreen');
+}
+});
+
+// Обробник для форми профілю
+document.getElementById('profileForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const user = auth.currentUser;
+if (!user) {
+  showNotification('Помилка', 'Ви не авторизовані', 'error');
+  return;
+}
+
+const nickname = elements.profileNickname.value;
+const newPassword = document.getElementById('profileNewPassword').value;
+const currentPassword = document.getElementById('profileCurrentPassword').value;
+
+if (!nickname || !currentPassword) {
+  showNotification('Помилка', 'Заповніть обов\'язкові поля', 'error');
+  return;
+}
+
+try {
+  // Перевіряємо поточний пароль
+  const credential = firebase.auth.EmailAuthProvider.credential(
+    user.email,
+    currentPassword
+  );
+  
+  await user.reauthenticateWithCredential(credential);
+  
+  // Оновлюємо дані користувача
+  await database.ref(`users/${user.uid}`).update({
+    nickname
+  });
+  
+  // Якщо вказано новий пароль, оновлюємо його
+  if (newPassword) {
+    await user.updatePassword(newPassword);
+  }
+  
+  showNotification('Успіх', 'Профіль успішно оновлено', 'success');
+  
+  // Оновлюємо інтерфейс
+  elements.userNameDisplay.textContent = nickname;
+  
+  // Якщо немає фото, показуємо ініціали
+  if (!elements.profilePicture.style.backgroundImage) {
+    elements.profilePicture.textContent = nickname.charAt(0).toUpperCase();
+  }
+  
+  // Затримка перед переходом на головний екран
+  setTimeout(() => {
+    showScreen('dashboardScreen');
+  }, 2000);
+  
+} catch (error) {
+  console.error('Помилка оновлення профілю:', error);
+  
+  let errorMessage = 'Не вдалося оновити профіль';
+  
+  if (error.code === 'auth/wrong-password') {
+    errorMessage = 'Невірний поточний пароль';
+  } else if (error.code === 'auth/weak-password') {
+    errorMessage = 'Новий пароль занадто слабкий';
+  } else if (error.code === 'auth/requires-recent-login') {
+    errorMessage = 'Необхідно повторно увійти в систему для зміни пароля';
+  } else if (error.message) {
+    errorMessage = error.message;
+  }
+  
+  showNotification('Помилка', errorMessage, 'error');
+}
+});
+
+// Перевіряємо, чи є збережені дані для входу
+document.addEventListener('DOMContentLoaded', () => {
+const savedEmail = localStorage.getItem('userEmail');
+const savedNickname = localStorage.getItem('userNickname');
+
+if (savedEmail && savedNickname) {
+  document.getElementById('loginEmail').value = savedEmail;
+  document.getElementById('loginNickname').value = savedNickname;
+  document.getElementById('rememberMe').checked = true;
+}
+
+// Встановлюємо поточний час для полів часу
+const currentTime = getCurrentTime();
+elements.startShiftTime.value = currentTime;
+elements.endShiftTime.value = currentTime;
+
+// Приховуємо індикатор прогресу завантаження
+elements.uploadProgress.style.display = 'none';
+
+// Перевіряємо стан авторизації
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    try {
+      // Завантажуємо дані користувача
+      const userData = await loadUserData(user.uid);
+      
+      // Оновлюємо інтерфейс
+      elements.userNameDisplay.textContent = userData.nickname || 'Користувач';
+      
+      // Встановлюємо фото профілю або ініціали
+      if (userData.photoURL) {
+        elements.profilePicture.style.backgroundImage = `url(${userData.photoURL})`;
+        elements.profilePicture.textContent = '';
+        elements.photoPreview.style.backgroundImage = `url(${userData.photoURL})`;
+      } else {
+        elements.profilePicture.style.backgroundImage = '';
+        elements.profilePicture.textContent = (userData.nickname || 'К').charAt(0).toUpperCase();
+        elements.photoPreview.style.backgroundImage = '';
+      }
+      
+      // Заповнюємо форму профілю
+      elements.profileEmail.value = userData.email || user.email;
+      elements.profileNickname.value = userData.nickname || '';
+      
+      // Перевіряємо наявність активної зміни
+      await checkActiveShift(user.uid);
+      
+      // Оновлюємо статистику
+      await updateUserStats(user.uid);
+      
+      // Переходимо на головний екран
+      showScreen('dashboardScreen');
+    } catch (error) {
+      console.error('Помилка завантаження даних:', error);
+      showNotification('Помилка', 'Не вдалося завантажити дані користувача', 'error');
+    }
+  } else {
+    showScreen('loginForm');
+  }
+});
+});
 </script>
 </body>
 </html>
