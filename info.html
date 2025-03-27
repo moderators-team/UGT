@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #7e22ce;
+            --primary-light: #a855f7;
+            --primary-dark: #6b21a8;
+            --secondary: #0ea5e9;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            color: var(--text);
+        }
+
+        .container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 2px rgba(126, 34, 206, 0.05);
+            width: 100%;
+            max-width: 550px;
+            padding: 0;
+            overflow: hidden;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+            animation: shimmer 8s infinite linear;
+        }
+
+        @keyframes shimmer {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .form-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-body {
+            padding: 40px;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.15s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+        .form-group:nth-child(4) { animation-delay: 0.25s; }
+        .form-group:nth-child(5) { animation-delay: 0.3s; }
+        .form-group:nth-child(6) { animation-delay: 0.35s; }
+        .form-group:nth-child(7) { animation-delay: 0.4s; }
+        .form-group:nth-child(8) { animation-delay: 0.45s; }
+        .form-group:nth-child(9) { animation-delay: 0.5s; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .input-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transition: all 0.3s;
+            border: 2px solid var(--border);
+        }
+
+        .input-container:hover {
+            border-color: var(--primary-light);
+        }
+
+        .input-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(126, 34, 206, 0.15);
+        }
+
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: none;
+            font-size: 15px;
+            background: transparent;
+            color: var(--text);
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .form-group input:focus::placeholder {
+            opacity: 0.5;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .input-container:focus-within .input-icon {
+            opacity: 1;
+            right: 12px;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 20px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards 0.55s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(126, 34, 206, 0.2);
+        }
+
+        button i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(126, 34, 206, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(126, 34, 206, 0.2);
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 25px;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 12px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .success-message {
+            display: none;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .error-message {
+            display: none;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Стилі для полів з датою */
+        input[type="date"] {
+            position: relative;
+            padding-right: 40px;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            filter: invert(50%) sepia(50%) saturate(1000%) hue-rotate(240deg);
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Анімація для фокусу на полях */
+        .input-focus-effect {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: width 0.3s ease;
+        }
+
+        .input-container:focus-within .input-focus-effect {
+            width: 100%;
+        }
+
+        /* Додаткові стилі для мобільних пристроїв */
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 16px;
+            }
+            
+            .form-header {
+                padding: 25px;
+            }
+            
+            .form-body {
+                padding: 25px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+            }
+            
+            .form-group input, 
+            .form-group select {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h2>Заповніть форму</h2>
+            <p>Усі поля обов'язкові для заповнення</p>
+        </div>
+        <div class="form-body">
+            <form id="discordForm">
+                <div class="form-group">
+                    <label for="pib"><i class="fas fa-user"></i> 1. ПІБ</label>
+                    <div class="input-container">
+                        <input type="text" id="pib" name="pib" placeholder="Введіть ваше повне ім'я" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthdate"><i class="fas fa-calendar-alt"></i> 2. Дата народження</label>
+                    <div class="input-container">
+                        <input type="date" id="birthdate" name="birthdate" required>
+                        <div class="input-focus-effect"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nickname"><i class="fas fa-tag"></i> 3. Ваш Nick Name</label>
+                    <div class="input-container">
+                        <input type="text" id="nickname" name="nickname" placeholder="Введіть ваш нікнейм" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telegram"><i class="fab fa-telegram"></i> 4. Telegram (посилання)</label>
+                    <div class="input-container">
+                        <input type="url" id="telegram" name="telegram" placeholder="https://t.me/username" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="discord"><i class="fab fa-discord"></i> 5. Discord</label>
+                    <div class="input-container">
+                        <input type="text" id="discord" name="discord" placeholder="username#0000" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="forum"><i class="fas fa-link"></i> 6. Посилання на форумний акаунт</label>
+                    <div class="input-container">
+                        <input type="url" id="forum" name="forum" placeholder="https://forum.example.com/profile" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> 7. E-mail</label>
+                    <div class="input-container">
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="acceptdate"><i class="fas fa-calendar-check"></i> 8. Дата прийняття</label>
+                    <div class="input-container">
+                        <input type="date" id="acceptdate" name="acceptdate" required>
+                        <div class="input-focus-effect"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="server"><i class="fas fa-server"></i> 9. На який сервер виплачувати ЗП</label>
+                    <div class="input-container">
+                        <input type="text" id="server" name="server" placeholder="#04 id 6826379" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+                
+                <button type="submit"><i class="fas fa-paper-plane"></i> Відправити</button>
+            </form>
+            
+            <div class="success-message message" id="successMessage">
+                <i class="fas fa-check-circle"></i> Дані успішно відправлено!
+            </div>
+            
+            <div class="error-message message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i> Помилка при відправці. Спробуйте ще раз.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('discordForm');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const inputs = document.querySelectorAll('input');
+            
+            // Тут потрібно вставити URL вашого Discord webhook
+            const webhookURL = 'https://discord.com/api/webhooks/1267585896648151181/iDgdi2sSAKyW0_ebNdfsLtKeW6pWLt39wVZPAlK13WMtFSEWmizAvbKf0ioBywwpuigr';
+            
+            // Додаємо ефект ripple для кнопки
+            const button = document.querySelector('button');
+            button.addEventListener('mousedown', function(e) {
+                const x = e.clientX - this.getBoundingClientRect().left;
+                const y = e.clientY - this.getBoundingClientRect().top;
+                
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 800);
+            });
+            
+            // Валідація полів при введенні
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const icon = this.parentElement.querySelector('.input-icon');
+                    if (this.value.trim() !== '' && this.checkValidity()) {
+                        icon.style.opacity = '1';
+                        icon.style.right = '12px';
+                    } else {
+                        icon.style.opacity = '0';
+                        icon.style.right = '16px';
+                    }
+                });
+            });
+            
+            // Обробка відправки форми
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Змінюємо текст кнопки
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Відправка...';
+                button.disabled = true;
+                
+                const pib = document.getElementById('pib').value;
+                const birthdate = document.getElementById('birthdate').value;
+                const nickname = document.getElementById('nickname').value;
+                const telegram = document.getElementById('telegram').value;
+                const discord = document.getElementById('discord').value;
+                const forum = document.getElementById('forum').value;
+                const email = document.getElementById('email').value;
+                const acceptdate = document.getElementById('acceptdate').value;
+                const server = document.getElementById('server').value;
+                
+                // Форматуємо дати для кращого відображення
+                const formatDate = (dateString) => {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('uk-UA');
+                };
+                
+                // Форматуємо дані для Discord
+                const data = {
+                    embeds: [{
+                        title: "📝 Нова форма заповнена",
+                        color: 0x7e22ce, // Фіолетовий колір
+                        fields: [
+                            {
+                                name: "1️⃣ ПІБ",
+                                value: pib,
+                                inline: false
+                            },
+                            {
+                                name: "2️⃣ Дата народження",
+                                value: formatDate(birthdate),
+                                inline: false
+                            },
+                            {
+                                name: "3️⃣ Ваш Nick Name",
+                                value: nickname,
+                                inline: false
+                            },
+                            {
+                                name: "4️⃣ Telegram (посилання)",
+                                value: telegram,
+                                inline: false
+                            },
+                            {
+                                name: "5️⃣ Discord",
+                                value: discord,
+                                inline: false
+                            },
+                            {
+                                name: "6️⃣ Посилання на форумний акаунт",
+                                value: forum,
+                                inline: false
+                            },
+                            {
+                                name: "7️⃣ E-mail",
+                                value: email,
+                                inline: false
+                            },
+                            {
+                                name: "8️⃣ Дата прийняття",
+                                value: formatDate(acceptdate),
+                                inline: false
+                            },
+                            {
+                                name: "9️⃣ На який сервер виплачувати ЗП",
+                                value: server,
+                                inline: false
+                            }
+                        ],
+                        timestamp: new Date().toISOString(),
+                        footer: {
+                            text: "Форма відправлена через веб-інтерфейс"
+                        }
+                    }]
+                };
+                
+                // Відправляємо дані на Discord webhook
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Показуємо повідомлення про успіх
+                        form.reset();
+                        successMessage.style.display = 'block';
+                        successMessage.classList.add('show');
+                        errorMessage.style.display = 'none';
+                        errorMessage.classList.remove('show');
+                        
+                        // Ховаємо повідомлення через 3 секунди
+                        setTimeout(() => {
+                            successMessage.classList.remove('show');
+                            setTimeout(() => {
+                                successMessage.style.display = 'none';
+                            }, 300);
+                        }, 3000);
+                        
+                        // Скидаємо іконки перевірки
+                        document.querySelectorAll('.input-icon').forEach(icon => {
+                            icon.style.opacity = '0';
+                            icon.style.right = '16px';
+                        });
+                    } else {
+                        throw new Error('Помилка відправки');
+                    }
+                })
+                .catch(error => {
+                    console.error('Помилка:', error);
+                    errorMessage.style.display = 'block';
+                    errorMessage.classList.add('show');
+                    successMessage.style.display = 'none';
+                    successMessage.classList.remove('show');
+                    
+                    // Ховаємо повідомлення про помилку через 3 секунди
+                    setTimeout(() => {
+                        errorMessage.classList.remove('show');
+                        setTimeout(() => {
+                            errorMessage.style.display = 'none';
+                        }, 300);
+                    }, 3000);
+                })
+                .finally(() => {
+                    // Відновлюємо текст кнопки
+                    button.innerHTML = '<i class="fas fa-paper-plane"></i> Відправити';
+                    button.disabled = false;
+                });
+            });
+            
+            // Додаємо анімацію для полів форми при фокусі
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-5px)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
