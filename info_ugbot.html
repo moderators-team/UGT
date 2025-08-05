@@ -467,7 +467,11 @@
 
             const datetime = formatDate(datetimeRaw);
 
-         const messageText = `
+const formattedCandidates = (typeof candidates === 'string' && candidates.length > 0)
+  ? candidates.split('\n').map(line => `• <i>${line.trim()}</i>`).join('\n')
+  : '<i>немає кандидатів</i>';
+
+const messageText = `
 <b>📨 Нова форма надіслана!</b>
 
 👤 <b>Відповідальний:</b> <i>${responsible}</i>
@@ -475,10 +479,7 @@
 📅 <b>Дата та час:</b> <i>${datetime}</i>
 
 🗂️ <b>Кандидати | Посади:</b>
-${candidates
-  .split('\n')
-  .map(line => `• <i>${line.trim()}</i>`)
-  .join('\n')}
+${formattedCandidates}
 `;
 
 fetch(API_URL, {
@@ -490,6 +491,7 @@ fetch(API_URL, {
     parse_mode: 'HTML',
   }),
 });
+
 
 
             .then(res => {
