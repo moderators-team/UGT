@@ -404,117 +404,127 @@
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('tgForm');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const inputs = document.querySelectorAll('input');
+        const button = document.querySelector('button');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('tgForm');
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            const inputs = document.querySelectorAll('input');
-            const button = document.querySelector('button');
+        // 🔐 Токен і chat_id
+        const BOT_TOKEN = '8245905153:AAG6Q2GV5SKw_6W_KN7J2tIGxQbAhLFirqI';
+        const CHAT_ID = '-4973655723';
+        const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-            // 🔐 ВСТАВ СВІЙ ТОКЕН І CHAT_ID
-            const BOT_TOKEN = '8245905153:AAG6Q2GV5SKw_6W_KN7J2tIGxQbAhLFirqI';
-            const CHAT_ID = '-4973655723';
-            const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        // Ripple ефект
+        button.addEventListener('mousedown', function (e) {
+            const x = e.clientX - this.getBoundingClientRect().left;
+            const y = e.clientY - this.getBoundingClientRect().top;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
+        });
 
-            // Ripple ефект на кнопку
-            button.addEventListener('mousedown', function (e) {
-                const x = e.clientX - this.getBoundingClientRect().left;
-                const y = e.clientY - this.getBoundingClientRect().top;
-                const ripple = document.createElement('span');
-                ripple.className = 'ripple';
-                ripple.style.left = `${x}px`;
-                ripple.style.top = `${y}px`;
-                this.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 800);
+        // Іконки перевірки
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                const icon = this.parentElement.querySelector('.input-icon');
+                if (this.value.trim() !== '' && this.checkValidity()) {
+                    icon.style.opacity = '1';
+                    icon.style.right = '12px';
+                } else {
+                    icon.style.opacity = '0';
+                    icon.style.right = '16px';
+                }
             });
+        });
 
-            // Іконки перевірки
-            inputs.forEach(input => {
-                input.addEventListener('input', function () {
-                    const icon = this.parentElement.querySelector('.input-icon');
-                    if (this.value.trim() !== '' && this.checkValidity()) {
-                        icon.style.opacity = '1';
-                        icon.style.right = '12px';
-                    } else {
-                        icon.style.opacity = '0';
-                        icon.style.right = '16px';
-                    }
-                });
-            });
+        // Функція форматування дати
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            const hh = String(date.getHours()).padStart(2, '0');
+            const mm = String(date.getMinutes()).padStart(2, '0');
+            return `${d}.${m}.${y} о ${hh}:${mm}`;
+        }
 
-            // Submit форми
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Відправка...';
-                button.disabled = true;
+        // Submit форми
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Відправка...';
+            button.disabled = true;
 
-                const responsible = document.getElementById('responsible').value;
-                const fraction = document.getElementById('fraction').value;
-                const datetime = document.getElementById('datetime').value;
-                const candidates = document.getElementById('candidates').value;
+            const responsible = document.getElementById('responsible').value.trim();
+            const fraction = document.getElementById('fraction').value.trim();
+            const datetimeRaw = document.getElementById('datetime').value.trim();
+            const candidates = document.getElementById('candidates').value.trim();
 
-                const messageText = `
-📝 <b>Нова форма</b>
+            const datetime = formatDate(datetimeRaw);
+
+            const messageText = `
+<b>📨 Нова форма надіслана!</b>
 
 👤 <b>1. Nick Name відповідального:</b> ${responsible}
 🏛️ <b>2. Фракція:</b> ${fraction}
 📅 <b>3. Дата та час:</b> ${datetime}
-📋 <b>4. Кандидати | посади:</b> ${candidates}
-                `;
+🗂️ <b>4. Кандидати | Посади:</b> ${candidates}
+            `;
 
-                fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: messageText,
-                        parse_mode: 'HTML'
-                    })
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: messageText,
+                    parse_mode: 'HTML'
                 })
-                .then(res => {
-                    if (res.ok) {
-                        form.reset();
-                        successMessage.style.display = 'block';
-                        successMessage.classList.add('show');
-                        errorMessage.style.display = 'none';
-                        errorMessage.classList.remove('show');
+            })
+            .then(res => {
+                if (res.ok) {
+                    form.reset();
+                    successMessage.style.display = 'block';
+                    successMessage.classList.add('show');
+                    errorMessage.style.display = 'none';
+                    errorMessage.classList.remove('show');
 
-                        document.querySelectorAll('.input-icon').forEach(icon => {
-                            icon.style.opacity = '0';
-                            icon.style.right = '16px';
-                        });
+                    document.querySelectorAll('.input-icon').forEach(icon => {
+                        icon.style.opacity = '0';
+                        icon.style.right = '16px';
+                    });
 
-                        setTimeout(() => {
-                            successMessage.classList.remove('show');
-                            setTimeout(() => {
-                                successMessage.style.display = 'none';
-                            }, 300);
-                        }, 3000);
-                    } else {
-                        throw new Error('Telegram error');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    errorMessage.style.display = 'block';
-                    errorMessage.classList.add('show');
-                    successMessage.style.display = 'none';
-                    successMessage.classList.remove('show');
                     setTimeout(() => {
-                        errorMessage.classList.remove('show');
+                        successMessage.classList.remove('show');
                         setTimeout(() => {
-                            errorMessage.style.display = 'none';
+                            successMessage.style.display = 'none';
                         }, 300);
                     }, 3000);
-                })
-                .finally(() => {
-                    button.innerHTML = '<i class="fas fa-paper-plane"></i> Відправити';
-                    button.disabled = false;
-                });
+                } else {
+                    throw new Error('Telegram error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                errorMessage.style.display = 'block';
+                errorMessage.classList.add('show');
+                successMessage.style.display = 'none';
+                successMessage.classList.remove('show');
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            })
+            .finally(() => {
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> Відправити';
+                button.disabled = false;
             });
         });
-    </script>
-</body>
-</html>
+    });
+</script>
