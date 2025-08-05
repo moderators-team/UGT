@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ВСІ ТВОЇ СТИЛІ ЗАЛИШАЮТЬСЯ -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #7e22ce;
+            --primary-light: #a855f7;
+            --primary-dark: #6b21a8;
+            --secondary: #0ea5e9;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            color: var(--text);
+        }
+
+        .container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 2px rgba(126, 34, 206, 0.05);
+            width: 100%;
+            max-width: 550px;
+            padding: 0;
+            overflow: hidden;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+            animation: shimmer 8s infinite linear;
+        }
+
+        @keyframes shimmer {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .form-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-body {
+            padding: 40px;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.15s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+        .form-group:nth-child(4) { animation-delay: 0.25s; }
+        .form-group:nth-child(5) { animation-delay: 0.3s; }
+        .form-group:nth-child(6) { animation-delay: 0.35s; }
+        .form-group:nth-child(7) { animation-delay: 0.4s; }
+        .form-group:nth-child(8) { animation-delay: 0.45s; }
+        .form-group:nth-child(9) { animation-delay: 0.5s; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .input-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transition: all 0.3s;
+            border: 2px solid var(--border);
+        }
+
+        .input-container:hover {
+            border-color: var(--primary-light);
+        }
+
+        .input-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(126, 34, 206, 0.15);
+        }
+
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: none;
+            font-size: 15px;
+            background: transparent;
+            color: var(--text);
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .form-group input:focus::placeholder {
+            opacity: 0.5;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .input-container:focus-within .input-icon {
+            opacity: 1;
+            right: 12px;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 20px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards 0.55s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(126, 34, 206, 0.2);
+        }
+
+        button i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(126, 34, 206, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(126, 34, 206, 0.2);
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 25px;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 12px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .success-message {
+            display: none;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .error-message {
+            display: none;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Стилі для полів з датою */
+        input[type="date"] {
+            position: relative;
+            padding-right: 40px;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            filter: invert(50%) sepia(50%) saturate(1000%) hue-rotate(240deg);
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Анімація для фокусу на полях */
+        .input-focus-effect {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: width 0.3s ease;
+        }
+
+        .input-container:focus-within .input-focus-effect {
+            width: 100%;
+        }
+
+        /* Додаткові стилі для мобільних пристроїв */
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 16px;
+            }
+            
+            .form-header {
+                padding: 25px;
+            }
+            
+            .form-body {
+                padding: 25px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+            }
+            
+            .form-group input, 
+            .form-group select {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h2>Заповніть форму</h2>
+            <p>Усі поля обов'язкові для заповнення</p>
+        </div>
+        <div class="form-body">
+            <form id="tgForm">
+                <div class="form-group">
+                    <label for="responsible"><i class="fas fa-user"></i> 1. Nick Name відповідального (слідкуючого)</label>
+                    <div class="input-container">
+                        <input type="text" id="responsible" name="responsible" placeholder="Nick Name" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fraction"><i class="fas fa-users"></i> 2. Фракція</label>
+                    <div class="input-container">
+                        <input type="text" id="fraction" name="fraction" placeholder="Назва фракції" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="datetime"><i class="fas fa-calendar-alt"></i> 3. Дата та час проведення</label>
+                    <div class="input-container">
+                        <input type="datetime-local" id="datetime" name="datetime" required>
+                        <div class="input-focus-effect"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="candidates"><i class="fas fa-user-tie"></i> 4. Кандидати | посади</label>
+                    <div class="input-container">
+                        <input type="text" id="candidates" name="candidates" placeholder="ПІБ - посада" required>
+                        <div class="input-focus-effect"></div>
+                        <i class="fas fa-check input-icon"></i>
+                    </div>
+                </div>
+
+                <button type="submit"><i class="fas fa-paper-plane"></i> Відправити</button>
+            </form>
+
+            <div class="success-message message" id="successMessage">
+                <i class="fas fa-check-circle"></i> Дані успішно надіслані в Telegram!
+            </div>
+
+            <div class="error-message message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i> Помилка при відправці. Спробуйте ще раз.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('tgForm');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const inputs = document.querySelectorAll('input');
+            const button = document.querySelector('button');
+
+            // 🔐 ВСТАВ СВІЙ ТОКЕН І CHAT_ID
+            const BOT_TOKEN = '8245905153:AAG6Q2GV5SKw_6W_KN7J2tIGxQbAhLFirqI';
+            const CHAT_ID = '-4973655723';
+            const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+            // Ripple ефект на кнопку
+            button.addEventListener('mousedown', function (e) {
+                const x = e.clientX - this.getBoundingClientRect().left;
+                const y = e.clientY - this.getBoundingClientRect().top;
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 800);
+            });
+
+            // Іконки перевірки
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    const icon = this.parentElement.querySelector('.input-icon');
+                    if (this.value.trim() !== '' && this.checkValidity()) {
+                        icon.style.opacity = '1';
+                        icon.style.right = '12px';
+                    } else {
+                        icon.style.opacity = '0';
+                        icon.style.right = '16px';
+                    }
+                });
+            });
+
+            // Submit форми
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Відправка...';
+                button.disabled = true;
+
+                const responsible = document.getElementById('responsible').value;
+                const fraction = document.getElementById('fraction').value;
+                const datetime = document.getElementById('datetime').value;
+                const candidates = document.getElementById('candidates').value;
+
+                const messageText = `
+📝 <b>Нова форма</b>
+
+👤 <b>1. Nick Name відповідального:</b> ${responsible}
+🏛️ <b>2. Фракція:</b> ${fraction}
+📅 <b>3. Дата та час:</b> ${datetime}
+📋 <b>4. Кандидати | посади:</b> ${candidates}
+                `;
+
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: messageText,
+                        parse_mode: 'HTML'
+                    })
+                })
+                .then(res => {
+                    if (res.ok) {
+                        form.reset();
+                        successMessage.style.display = 'block';
+                        successMessage.classList.add('show');
+                        errorMessage.style.display = 'none';
+                        errorMessage.classList.remove('show');
+
+                        document.querySelectorAll('.input-icon').forEach(icon => {
+                            icon.style.opacity = '0';
+                            icon.style.right = '16px';
+                        });
+
+                        setTimeout(() => {
+                            successMessage.classList.remove('show');
+                            setTimeout(() => {
+                                successMessage.style.display = 'none';
+                            }, 300);
+                        }, 3000);
+                    } else {
+                        throw new Error('Telegram error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    errorMessage.style.display = 'block';
+                    errorMessage.classList.add('show');
+                    successMessage.style.display = 'none';
+                    successMessage.classList.remove('show');
+                    setTimeout(() => {
+                        errorMessage.classList.remove('show');
+                        setTimeout(() => {
+                            errorMessage.style.display = 'none';
+                        }, 300);
+                    }, 3000);
+                })
+                .finally(() => {
+                    button.innerHTML = '<i class="fas fa-paper-plane"></i> Відправити';
+                    button.disabled = false;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
