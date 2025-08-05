@@ -467,24 +467,31 @@
 
             const datetime = formatDate(datetimeRaw);
 
-            const messageText = `
+           const messageText = `
 <b>📨 Нова форма надіслана!</b>
 
-👤 <b>1. Nick Name відповідального:</b> ${responsible}
-🏛️ <b>2. Фракція:</b> ${fraction}
-📅 <b>3. Дата та час:</b> ${datetime}
-🗂️ <b>4. Кандидати | Посади:</b> ${candidates}
-            `;
+─────────────
 
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: messageText,
-                    parse_mode: 'HTML'
-                })
-            })
+👤 <b>Відповідальний:</b> <i>${responsible}</i>
+🏛️ <b>Фракція:</b> <i>${fraction}</i>
+📅 <b>Дата та час:</b> <i>${datetime}</i>
+
+🗂️ <b>Кандидати | Посади:</b>
+<pre>${candidates}</pre>
+
+─────────────
+`;
+
+fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: messageText,
+        parse_mode: 'HTML'
+    })
+})
+
             .then(res => {
                 if (res.ok) {
                     form.reset();
