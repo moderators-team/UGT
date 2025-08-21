@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECURE ACCESS TERMINAL</title>
+    <title>Заявка на вступ в підрозділ</title>
+    <link rel="icon" href="https://i.imgur.com/Jc4Hu8e.png" type="image/png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;500;700&family=Share+Tech+Mono&display=swap');
         
@@ -606,8 +607,8 @@
     <div class="container">
         <div class="terminal-header">
             <div class="classification-banner">TOP SECRET</div>
-            <h1 class="terminal-title glitch" data-text="SECURE ACCESS">SECURE ACCESS</h1>
-            <p class="terminal-subtitle">CLASSIFIED RECRUITMENT TERMINAL</p>
+            <h1 class="terminal-title glitch" data-text="Заявка на вступ в підрозділ">Заявка на вступ в підрозділ</h1>
+            <p class="terminal-subtitle">Національна поліція України</p>
         </div>
         
         <div class="form-container">
@@ -781,8 +782,9 @@
             createMatrixEffect();
         });
 
-        // Замініть на ваш Discord Webhook URL
-        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1408038115620163595/8KpmWcJcb2xCG1yUxnltW_ZfFt56618hrlya6lYp3rMo3NxhOt5cGXeBd9WwPUGB09DN';
+        // Замініть на ваш реальний Discord Webhook URL
+        // Вставте свій URL вебхука Discord тут:
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1408113293255512176/g6SSUDWjiIIRh-QlhW9v9EyalEXv_u22R-qci1BKC0Mi2QwVMrIwRxdCLatx9QPRcETH';
         
         document.getElementById('recruitmentForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -806,42 +808,42 @@
                 color: 65280, // Зелений колір
                 fields: [
                     {
-                        name: "Ігровий нікнейм",
+                        name: "🎮 Ігровий нікнейм",
                         value: data.nickname,
                         inline: true
                     },
                     {
-                        name: "Звання",
+                        name: "🎖️ Звання",
                         value: data.rank,
                         inline: true
                     },
                     {
-                        name: "Підрозділ",
+                        name: "👮‍♂️ Підрозділ",
                         value: data.department,
                         inline: false
                     },
                     {
-                        name: "Вік",
+                        name: "📆 Вік",
                         value: data.age + " років",
                         inline: true
                     },
                     {
-                        name: "Telegram",
+                        name: "📱 Telegram",
                         value: data.telegram,
                         inline: true
                     },
                     {
-                        name: "Чому повинні вступити",
+                        name: "💭 Чому повинні вступити",
                         value: data.reason,
                         inline: false
                     },
                     {
-                        name: "Характеристика",
+                        name: "👤 Характеристика",
                         value: data.characteristics,
                         inline: false
                     },
                     {
-                        name: "Плани в підрозділі",
+                        name: "🎯 Плани в підрозділі",
                         value: data.plans,
                         inline: false
                     }
@@ -859,7 +861,7 @@
             try {
                 // Перевірка наявності webhook URL
                 if (DISCORD_WEBHOOK_URL === 'YOUR_DISCORD_WEBHOOK_URL_HERE') {
-                    throw new Error('Webhook URL не налаштований');
+                    throw new Error('Webhook URL не налаштований. Будь ласка, вставте ваш реальний Discord Webhook URL у коді.');
                 }
                 
                 const response = await fetch(DISCORD_WEBHOOK_URL, {
@@ -874,12 +876,12 @@
                     messageDiv.innerHTML = '<div class="success-message">ЗАЯВКА УСПІШНО ВІДПРАВЛЕНА!</div>';
                     this.reset();
                 } else {
-                    throw new Error('Помилка відправки');
+                    throw new Error('Помилка відправки на сервер Discord');
                 }
                 
             } catch (error) {
                 console.error('Error:', error);
-                messageDiv.innerHTML = '<div class="error-message">ПОМИЛКА ВІДПРАВКИ. Перевірте налаштування webhook.</div>';
+                messageDiv.innerHTML = '<div class="error-message">ПОМИЛКА ВІДПРАВКИ: ' + error.message + '</div>';
             } finally {
                 // Повернути кнопку в нормальний стан
                 submitBtn.classList.remove('loading');
@@ -977,3 +979,4 @@
     </script>
 </body>
 </html>
+
