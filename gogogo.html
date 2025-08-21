@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE ACCESS TERMINAL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;500;700&family=Share+Tech+Mono&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff41;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Added matrix-style falling code background */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            color: #00ff00;
+            opacity: 0.6;
+            animation: matrix-fall linear infinite;
+            white-space: nowrap;
+            text-shadow: 0 0 8px #00ff00;
+        }
+        
+        .matrix-column.binary {
+            color: #00ff41;
+            opacity: 0.4;
+            text-shadow: 0 0 8px #00ff41;
+        }
+        
+        .matrix-column.hex {
+            color: #00cc00;
+            opacity: 0.5;
+            text-shadow: 0 0 8px #00cc00;
+        }
+        
+        /* Added security labels floating around */
+        .security-labels {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .security-label {
+            position: absolute;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: 700;
+            font-size: 12px;
+            color: #ff0080;
+            opacity: 0.2;
+            animation: float-label 15s linear infinite;
+            text-shadow: 0 0 10px #ff0080;
+        }
+        
+        @keyframes matrix-fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        @keyframes float-label {
+            0% {
+                transform: translateX(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateX(calc(100vw + 100px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .terminal-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 
+                0 0 50px rgba(0, 255, 65, 0.4),
+                inset 0 0 30px rgba(0, 255, 65, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Enhanced header with better glow effects */
+        .terminal-header::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, #00ff41, #ff0080, #00ffff, #00ff41);
+            border-radius: 15px;
+            z-index: -1;
+            animation: border-glow 4s ease-in-out infinite;
+        }
+        
+        @keyframes border-glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        .terminal-title {
+            font-size: 3rem;
+            font-weight: 900;
+            text-shadow: 
+                0 0 20px #00ff41,
+                0 0 40px #00ff41,
+                0 0 60px #00ff41;
+            margin-bottom: 15px;
+            letter-spacing: 4px;
+        }
+        
+        .terminal-subtitle {
+            font-size: 1.1rem;
+            color: #ff0080;
+            text-shadow: 
+                0 0 10px #ff0080,
+                0 0 20px #ff0080;
+            letter-spacing: 3px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        /* Added classification banner */
+        .classification-banner {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 128, 0.2);
+            border: 1px solid #ff0080;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #ff0080;
+            text-shadow: 0 0 5px #ff0080;
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(255, 0, 128, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 128, 0.8); }
+        }
+        
+        .form-container {
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff41;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 
+                0 0 80px rgba(0, 255, 65, 0.3),
+                inset 0 0 50px rgba(0, 0, 0, 0.8);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Added corner decorations */
+        .form-container::before,
+        .form-container::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #00ff41;
+        }
+        
+        .form-container::before {
+            top: 15px;
+            left: 15px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .form-container::after {
+            bottom: 15px;
+            right: 15px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+            text-shadow: 0 0 8px #00ff41;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        /* Enhanced input fields with better styling */
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(0, 20, 0, 0.8);
+            border: 2px solid #333;
+            border-radius: 12px;
+            color: #00ff41;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: all 0.4s ease;
+            outline: none;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #666;
+            font-style: italic;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #00ff41;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 65, 0.4),
+                inset 0 0 20px rgba(0, 50, 0, 0.8);
+            background: rgba(0, 30, 0, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        /* Custom select styling */
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%2300ff41' viewBox='0 0 16 16'%3e%3cpath d='M8 13.1l4.2-4.2-1.4-1.4L8 10.3 5.2 7.5 3.8 8.9z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+        
+        .form-select option {
+            background: #000;
+            color: #00ff41;
+            padding: 10px;
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: none;
+            line-height: 1.6;
+        }
+        
+        /* Enhanced submit button with scan line effect */
+        .submit-btn {
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(45deg, #00ff41, #00cc33, #00ff41);
+            background-size: 200% 200%;
+            border: none;
+            border-radius: 15px;
+            color: #000;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 255, 65, 0.5);
+            text-shadow: 0 0 10px #000;
+        }
+        
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.9; }
+        }
+        
+        .success-message,
+        .error-message {
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 2px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .success-message {
+            background: rgba(0, 255, 65, 0.15);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            text-shadow: 0 0 15px #00ff41;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+        }
+        
+        .error-message {
+            background: rgba(255, 0, 128, 0.15);
+            border: 2px solid #ff0080;
+            color: #ff0080;
+            text-shadow: 0 0 15px #ff0080;
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.2);
+        }
+        
+        /* Glitch effect for title */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitch-1 3s infinite;
+            color: #ff0080;
+            z-index: -1;
+        }
+        
+        .glitch::after {
+            animation: glitch-2 3s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% {
+                transform: translate(0);
+            }
+            15%, 49% {
+                transform: translate(-3px, 2px);
+            }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% {
+                transform: translate(0);
+            }
+            21%, 62% {
+                transform: translate(3px, -2px);
+            }
+        }
+        
+        /* Added scan line effect */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            animation: scan 4s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
+        
+        /* Added more security elements and improved matrix effect */
+        .security-badge {
+            position: fixed;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 8px 16px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: 700;
+            font-size: 11px;
+            border: 2px solid #ff0000;
+            border-radius: 4px;
+            z-index: 100;
+            animation: security-pulse 2s ease-in-out infinite;
+            text-shadow: 0 0 5px #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        @keyframes security-pulse {
+            0%, 100% { 
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+        
+        .security-logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ff0000, #cc0000);
+            border: 3px solid #ff0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 12px;
+            color: white;
+            text-shadow: 0 0 10px #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            animation: logo-rotate 10s linear infinite;
+            z-index: 100;
+        }
+        
+        @keyframes logo-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Dynamic language validation styles */
+        .language-hint {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+            font-family: 'Fira Code', monospace;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        
+        .language-hint.show {
+            color: #ff0080;
+            opacity: 1;
+            text-shadow: 0 0 5px #ff0080;
+            animation: hint-pulse 1s ease-in-out;
+        }
+        
+        @keyframes hint-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .form-input.language-error,
+        .form-textarea.language-error {
+            border-color: #ff0080;
+            box-shadow: 0 0 15px rgba(255, 0, 128, 0.3);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .terminal-title {
+                font-size: 2.2rem;
+                letter-spacing: 2px;
+            }
+            
+            .form-container {
+                padding: 30px 25px;
+            }
+            
+            .form-input,
+            .form-select,
+            .form-textarea {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Added styles to remove number input arrows and fix textarea resize */
+        .form-input[type="number"]::-webkit-outer-spin-button,
+        .form-input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .form-input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <!-- Added matrix background and security labels -->
+    <div class="matrix-bg" id="matrixBg"></div>
+    <div class="security-labels" id="securityLabels"></div>
+    <div class="scan-line"></div>
+    
+    <!-- Added security elements -->
+    <div class="security-logo">SEC</div>
+    <div class="security-badge" style="top: 20px; right: 20px;">PRIVATE</div>
+    <div class="security-badge" style="bottom: 20px; left: 20px;">CLASSIFIED</div>
+    <div class="security-badge" style="bottom: 20px; right: 20px;">RESTRICTED</div>
+    
+    <div class="container">
+        <div class="terminal-header">
+            <div class="classification-banner">TOP SECRET</div>
+            <h1 class="terminal-title glitch" data-text="SECURE ACCESS">SECURE ACCESS</h1>
+            <p class="terminal-subtitle">CLASSIFIED RECRUITMENT TERMINAL</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="recruitmentForm">
+                <div class="form-group">
+                    <label class="form-label" for="nickname">Ваш ігровий нікнейм</label>
+                    <input type="text" id="nickname" name="nickname" class="form-input" placeholder="Ваш нікнейм" required>
+                    <!-- Replaced emoji with SVG icon -->
+                    <div class="language-hint" id="nicknameHint">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 5px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        Нікнейм має бути українською мовою
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="rank">Порядкове звання</label>
+                    <select id="rank" name="rank" class="form-select" required>
+                        <option value="">Оберіть звання</option>
+                        <option value="Рядовий [1]">Рядовий [1]</option>
+                        <option value="Капрал [2]">Капрал [2]</option>
+                        <option value="Сержант [3]">Сержант [3]</option>
+                        <option value="Ст. сержант [4]">Ст. сержант [4]</option>
+                        <option value="Мл. лейтенант [5]">Мл. лейтенант [5]</option>
+                        <option value="Лейтенант [6]">Лейтенант [6]</option>
+                        <option value="Старший лейтенант [7]">Старший лейтенант [7]</option>
+                        <option value="Капітан [8]">Капітан [8]</option>
+                        <option value="Майор [9]">Майор [9]</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="department">В який підрозділ бажаєте вступити?</label>
+                    <select id="department" name="department" class="form-select" required>
+                        <option value="">Оберіть підрозділ</option>
+                        <option value="Центр первинної професійної підготовки">Центр первинної професійної підготовки</option>
+                        <option value="Управління патрульної поліції">Управління патрульної поліції</option>
+                        <option value="Корпус оперативно-раптової дії">Корпус оперативно-раптової дії</option>
+                        <option value="Головне слідче управління">Головне слідче управління</option>
+                        <option value="Департамент Внутрішньої Безпеки">Департамент Внутрішньої Безпеки</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="age">Скільки вам років?</label>
+                    <input type="number" id="age" name="age" class="form-input" min="16" max="65" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="reason">Чому саме ви повинні вступити в підрозділ?</label>
+                    <textarea id="reason" name="reason" class="form-textarea" placeholder="Опишіть ваші мотиви..." required></textarea>
+                    <!-- Replaced emoji with SVG icon -->
+                    <div class="language-hint" id="reasonHint">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 5px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        Відповідь має бути українською мовою
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="characteristics">Охарактеризуйте себе</label>
+                    <textarea id="characteristics" name="characteristics" class="form-textarea" placeholder="Розкажіть про свої якості..." required></textarea>
+                    <!-- Replaced emoji with SVG icon -->
+                    <div class="language-hint" id="characteristicsHint">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 5px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        Опис має бути українською мовою
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="plans">Які ваші плани будуть в підрозділі?</label>
+                    <textarea id="plans" name="plans" class="form-textarea" placeholder="Опишіть ваші плани..." required></textarea>
+                    <!-- Replaced emoji with SVG icon -->
+                    <div class="language-hint" id="plansHint">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 5px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        Плани мають бути описані українською мовою
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="telegram">Ваш Telegram для зв'язку</label>
+                    <input type="text" id="telegram" name="telegram" class="form-input" placeholder="@username" required>
+                    <!-- Replaced emoji with SVG icon -->
+                    <div class="language-hint" id="telegramHint">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 5px;">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        Username має бути англійською мовою
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <span id="btnText">ВІДПРАВИТИ ЗАЯВКУ</span>
+                </button>
+            </form>
+            
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix effect
+        function createMatrixEffect() {
+            const matrixBg = document.getElementById('matrixBg');
+            const hackingChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEF0123456789';
+            const binaryChars = '01010101010101010101010101010101';
+            const hexChars = '0123456789ABCDEF0x';
+            const columns = Math.floor(window.innerWidth / 12);
+            
+            for (let i = 0; i < columns; i++) {
+                const columnTypes = ['normal', 'binary', 'hex'];
+                const columnType = columnTypes[Math.floor(Math.random() * columnTypes.length)];
+                
+                const column = document.createElement('div');
+                column.className = `matrix-column ${columnType}`;
+                column.style.left = i * 12 + 'px';
+                column.style.animationDuration = (Math.random() * 1.5 + 0.5) + 's';
+                column.style.animationDelay = Math.random() * 0.5 + 's';
+                
+                let text = '';
+                let chars = hackingChars;
+                
+                if (columnType === 'binary') {
+                    chars = binaryChars;
+                } else if (columnType === 'hex') {
+                    chars = hexChars;
+                }
+                
+                for (let j = 0; j < 35; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '\n';
+                }
+                column.textContent = text;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+        
+        // Security labels
+        function createSecurityLabels() {
+            const labels = ['CONFIDENTIAL', 'CLASSIFIED', 'TOP SECRET', 'RESTRICTED', 'PRIVATE', 'ENCRYPTED', 'SECURE', 'AUTHORIZED ONLY'];
+            const securityLabels = document.getElementById('securityLabels');
+            
+            setInterval(() => {
+                const label = document.createElement('div');
+                label.className = 'security-label';
+                label.textContent = labels[Math.floor(Math.random() * labels.length)];
+                label.style.top = Math.random() * window.innerHeight + 'px';
+                label.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                
+                securityLabels.appendChild(label);
+                
+                setTimeout(() => {
+                    label.remove();
+                }, 15000);
+            }, 3000);
+        }
+        
+        // Initialize effects
+        createMatrixEffect();
+        createSecurityLabels();
+        
+        // Recreate matrix on resize
+        window.addEventListener('resize', () => {
+            document.getElementById('matrixBg').innerHTML = '';
+            createMatrixEffect();
+        });
+
+        // Замініть на ваш Discord Webhook URL
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1408038115620163595/8KpmWcJcb2xCG1yUxnltW_ZfFt56618hrlya6lYp3rMo3NxhOt5cGXeBd9WwPUGB09DN';
+        
+        document.getElementById('recruitmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.querySelector('.submit-btn');
+            const btnText = document.getElementById('btnText');
+            const messageDiv = document.getElementById('message');
+            
+            // Показати стан завантаження
+            submitBtn.classList.add('loading');
+            btnText.textContent = 'ОБРОБКА ДАНИХ...';
+            messageDiv.innerHTML = '';
+            
+            // Збір даних форми
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Створення повідомлення для Discord
+            const embed = {
+                title: "НОВА ЗАЯВКА НА ВСТУП",
+                color: 65280, // Зелений колір
+                fields: [
+                    {
+                        name: "Ігровий нікнейм",
+                        value: data.nickname,
+                        inline: true
+                    },
+                    {
+                        name: "Звання",
+                        value: data.rank,
+                        inline: true
+                    },
+                    {
+                        name: "Підрозділ",
+                        value: data.department,
+                        inline: false
+                    },
+                    {
+                        name: "Вік",
+                        value: data.age + " років",
+                        inline: true
+                    },
+                    {
+                        name: "Telegram",
+                        value: data.telegram,
+                        inline: true
+                    },
+                    {
+                        name: "Чому повинні вступити",
+                        value: data.reason,
+                        inline: false
+                    },
+                    {
+                        name: "Характеристика",
+                        value: data.characteristics,
+                        inline: false
+                    },
+                    {
+                        name: "Плани в підрозділі",
+                        value: data.plans,
+                        inline: false
+                    }
+                ],
+                timestamp: new Date().toISOString(),
+                footer: {
+                    text: "Система набору персоналу"
+                }
+            };
+            
+            const payload = {
+                embeds: [embed]
+            };
+            
+            try {
+                // Перевірка наявності webhook URL
+                if (DISCORD_WEBHOOK_URL === 'YOUR_DISCORD_WEBHOOK_URL_HERE') {
+                    throw new Error('Webhook URL не налаштований');
+                }
+                
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success-message">ЗАЯВКА УСПІШНО ВІДПРАВЛЕНА!</div>';
+                    this.reset();
+                } else {
+                    throw new Error('Помилка відправки');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.innerHTML = '<div class="error-message">ПОМИЛКА ВІДПРАВКИ. Перевірте налаштування webhook.</div>';
+            } finally {
+                // Повернути кнопку в нормальний стан
+                submitBtn.classList.remove('loading');
+                btnText.textContent = 'ВІДПРАВИТИ ЗАЯВКУ';
+            }
+        });
+        
+        // Валідація поля віку (тільки цифри)
+        document.getElementById('age').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Валідація Telegram поля
+        document.getElementById('telegram').addEventListener('input', function(e) {
+            let value = this.value;
+            if (value && !value.startsWith('@')) {
+                this.value = '@' + value;
+            }
+            // Validate English for telegram username (after @)
+            const username = value.replace('@', '');
+            if (username) {
+                validateLanguage({value: username}, false, 'telegramHint');
+            }
+        });
+
+        function isUkrainian(text) {
+            const ukrainianChars = /[а-яіїєґ]/i;
+            const englishChars = /[a-z]/i;
+            const ukrainianCount = (text.match(/[а-яіїєґ]/gi) || []).length;
+            const englishCount = (text.match(/[a-z]/gi) || []).length;
+            
+            if (text.length < 3) return true; // Don't validate short text
+            return ukrainianCount > englishCount;
+        }
+        
+        function isEnglish(text) {
+            const englishChars = /[a-z]/i;
+            const ukrainianChars = /[а-яіїєґ]/i;
+            const englishCount = (text.match(/[a-z]/gi) || []).length;
+            const ukrainianCount = (text.match(/[а-яіїєґ]/gi) || []).length;
+            
+            if (text.length < 2) return true; // Don't validate short text
+            return englishCount >= ukrainianCount;
+        }
+        
+        function validateLanguage(input, shouldBeUkrainian, hintId) {
+            const hint = document.getElementById(hintId);
+            const text = input.value.trim();
+            
+            if (text.length < 2) {
+                hint.classList.remove('show');
+                input.classList.remove('language-error');
+                return;
+            }
+            
+            const isValid = shouldBeUkrainian ? isUkrainian(text) : isEnglish(text);
+            
+            if (!isValid) {
+                hint.classList.add('show');
+                input.classList.add('language-error');
+            } else {
+                hint.classList.remove('show');
+                input.classList.remove('language-error');
+            }
+        }
+        
+        // Add language validation listeners
+        document.getElementById('nickname').addEventListener('input', function() {
+            validateLanguage(this, true, 'nicknameHint');
+        });
+        
+        document.getElementById('reason').addEventListener('input', function() {
+            validateLanguage(this, true, 'reasonHint');
+        });
+        
+        document.getElementById('characteristics').addEventListener('input', function() {
+            validateLanguage(this, true, 'characteristicsHint');
+        });
+        
+        document.getElementById('plans').addEventListener('input', function() {
+            validateLanguage(this, true, 'plansHint');
+        });
+        
+        document.getElementById('telegram').addEventListener('input', function() {
+            let value = this.value;
+            if (value && !value.startsWith('@')) {
+                this.value = '@' + value;
+            }
+            // Validate English for telegram username (after @)
+            const username = value.replace('@', '');
+            if (username) {
+                validateLanguage({value: username}, false, 'telegramHint');
+            }
+        });
+    </script>
+</body>
+</html>
